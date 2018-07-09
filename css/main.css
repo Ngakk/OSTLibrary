@@ -3,19 +3,23 @@
 
 .navbar-default .navbar-nav > .active{
     color: #000;
-    background: #082a3d;
+    background: #1F2F36;
 }
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
     color: #000;
-    background: #082a3d;
+    background: #2E1760;
+}
+.navbar-default .navbar-brand{
+	color: #F2F4F3;	
 }
 .navbar{
 	border-radius: 0px;
 }
-img {align="middle"}
-.menu{margin-bottom:0px; background-color:#0B3954; border-color:#082a3d}
+img {align:"middle"}
+.menu{margin-bottom:0px; background-color:#22333B; border-color:#0A0908}
+
 
 .intro{position:relative; padding:0px; background-image:url(../OSTLibrary/img/forest.png); background-position:center 75%}
 .weare{height: 300px;text-align:center;}
@@ -93,3 +97,62 @@ html,body,.container {
 }
 
 .filterSearchResult:hover {background-color: #ddd;}
+
+.ostguessblock{
+	position:relative;
+	float:left;
+	background-color:#FFFFFF;
+	width:36.8%;
+	padding:1%;
+}
+
+.blocktopleft{
+	height:50%;
+	left:12.5%;
+	top:6.5%
+}
+
+.blocktopright{
+	float:right;
+	height:50%;
+	top:6.5%;
+	right:12.5%;
+}
+
+.blockbottomleft{
+	height:30%;
+	left:12.5%;
+	top:9%;
+}
+
+.blockbottomright{
+	height:30%;
+	float:right;
+	right:12.5%;
+	top:9%;
+}
+
+.guessChat{
+	width:100%;	
+	height:100%;
+	overflow: auto;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.show {display: block;}

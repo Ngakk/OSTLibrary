@@ -1,0 +1,387 @@
+<!-- modales -->
+<div id="modalEliminar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Confirmar</h4>
+      </div>
+      <div class="modal-body">
+        <p>¿Confirmar la eliminacion de la base de datos?</p>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siEliminar" href="Javascript:;" onClick="">Si</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- usuarios -->
+<div id="modalAgregarUsuario" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form action="/action_page.php">
+          <div class="form-group">
+            <label for="addUserName">Nombre de usuario:</label>
+            <input type="text" class="form-control" id="addUserName">
+          </div>
+          <div class="form-group">
+            <label for="addUserPass">Contraseña:</label>
+            <input type="text" class="form-control" id="addUserPass">
+          </div>
+          <div class="form-group">
+            <label for="addUserMail">Correo electronico:</label>
+            <input type="email" class="form-control" id="addUserMail">
+          </div>
+          <div class="from-group">
+            <label for="addUserDate">Fecha de nacimiento (YYYY-MM-DD):</label>
+            <input type="text" class="form-control" id="addUserDate">
+          </div>
+          <div class="form-group">
+            <label for="addUserImgurl">URL de imagen (puede dejarse vacio):</label>
+            <input type="text" class="form-control" id="addUserImgurl">
+          </div>
+          <div class="form-group">
+            <label for="addUserLevel">Nivel de usuario: </label>
+            <select class="form-control" id="addUserLevel">
+              <option>Usuario comun</option>
+              <option>Administrador</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siAgregarUsuario" data-dismiss="modal" href="Javascript:;" onClick="addUser($('#addUserName').val(), $('#addUserPass').val(), $('#addUserMail').val(), $('#addUserDate').val(), $('#addUserImgurl').val(), $('#addUserLevel').val()); return false;">Agregar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalEditarUsuario" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="editUserName">Nombre de usuario:</label>
+            <input type="text" class="form-control" id="editUserName" value="huehuehue">
+          </div>
+          <div class="form-group">
+            <label for="editUserPass">Contraseña:</label>
+            <input type="text" class="form-control" id="editUserPass">
+          </div>
+          <div class="form-group">
+            <label for="editUserMail">Correo electronico:</label>
+            <input type="email" class="form-control" id="editUserMail">
+          </div>
+          <div class="from-group">
+            <label for="editUserDate">Fecha de nacimiento (YYYY-MM-DD):</label>
+            <input type="text" class="form-control" id="editUserDate">
+          </div>
+          <div class="form-group">
+            <label for="editUserImgurl">URL de imagen (puede dejarse vacio):</label>
+            <input type="text" class="form-control" id="editUserImgurl">
+          </div>
+          <div class="form-group">
+            <label for="editUserLevel">Nivel de usuario: </label>
+            <select class="form-control" id="editUserLevel">
+              <option>Usuario comun</option>
+              <option>Administrador</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siEditarUsuario" data-dismiss="modal" href="Javascript:;" onClick="sendEditUser($('#siEditarUsuario').attr('userID'), $('#editUserName').val(), $('#editUserPass').val(), $('#editUserMail').val(), $('#editUserDate').val(), $('#editUserImgurl').val(), $('#editUserLevel').val());return false;">Editar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- secciones -->
+<div id="modalAgregarSeccion" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form action="">
+          <div class="form-group">
+            <label for="addSectionName">Nombre de seccion:</label>
+            <input type="text" class="form-control" id="addSectionName">
+          </div>
+          <div class="form-group">
+            <label for="addSectionLevel">Nivel de seccion: </label>
+            <select class="form-control" id="addSectionLevel">
+              <option>Usuario comun</option>
+              <option>Administrador</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siAgregarSeccion"  data-dismiss="modal"href="Javascript:;" onClick="addSection($('#addSectionName').val(), $('#addSectionLevel').val()); return false;">Agregar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalEditarSeccion" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="editSectionName">Nombre de seccion:</label>
+            <input type="text" class="form-control" id="editSectionName">
+          </div>
+          <div>
+            <label for="editSectionLevel">Nivel de seccion: </label>
+            <select class="form-control" id="editSectionLevel">
+              <option>Usuario comun</option>
+              <option>Administrador</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siEditarSeccion" data-dismiss="modal" sectID="" href="Javascript:;" onClick="sendEditSection($('#siEditarSeccion').attr('sectID'), $('#editSectionName').val(), $('#editSectionLevel').val());return false;">Editar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- contenido -->
+<div id="modalAgregarContenido" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="modalContenidoTitulo">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form action="">
+          <div class="form-group">
+            <label for="addContentName">Nombre de contenido:</label>
+            <input type="text" class="form-control" id="addContentName">
+          </div>
+          <div class="form-group">
+            <label for="addContentText">Texto:</label>
+            <textarea class="form-control" rows="5" id="addContentText"></textarea>
+          </div>
+		  <div class="form-group">
+			<label for="addContentSeccion"> Seccion </label>
+			<select class="form-control" id="addContentSeccion" selectedId="">
+				
+			</select>	
+		  </div>
+          <div class="form-group">
+		    <label for="addContentType">Tipo de contenido</label>
+			<select class="form-control" id="addContentType">
+              <option>Ninguno</option>
+			  <option>Album</option>
+			  <option>Artista</option>
+			</select>
+		  </div>
+          <div class="form-group" style="display:none" id="addContentFilterDiv">
+            <label for="addContentData"> Contenido a mostrar: </label>
+            <input type="text" placeholder="Buscar.." class="form-control" id="addContentFilterInput">
+			<button type="button" class="form-group" id="addContentFilterSearch" rowId=""> Buscar </button>
+			<div class="form-group" id="addConterFilteredResults" selectedId="">
+			
+			</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" data-dismiss="modal" id="siAgregarContenido" href="Javascript:;" onClick="">Agregar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Albumes -->
+<div id="modalAgregarAlbum" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="modalAlbumTitulo">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form action="">
+          <div class="form-group">
+            <label for="addAlbumName">Nombre de album:</label>
+            <input type="text" class="form-control" id="addAlbumName">
+          </div>
+          <div class="form-group">
+            <label for="addAlbumDate">Fecha de lanzamiento:</label>
+            <input class="form-control" id="addAlbumDate">
+          </div>
+          <div class="form-group">
+            <label for="addAlbumImage">URL de imagen:</label>
+            <input class="form-control" id="addAlbumImage">
+          </div>
+          <div class="form-group" id="addAlbSourceFilterDiv">
+            <label for="addAlbSourceFilterInput"> Fuente del album: </label>
+            <input type="text" placeholder="Buscar.." class="form-control" id="addAlbSourceFilterInput">
+			<button type="button" class="form-group" id="addAlbSourceFilterSearch" rowId=""> Buscar </button>
+			<div class="form-group" id="addAlbSourceFilteredResultsSelected">
+			
+			</div>
+			<div class="form-group" id="addAlbSourceFilteredResults">
+			
+			</div>
+          </div>   
+		  <div class="form-group" id="addAlbTagFilterDiv">
+            <label for="addAlbTagFilterInput"> Tags del album: </label>
+            <input type="text" placeholder="Buscar.." class="form-control" id="addAlbTagFilterInput">
+			<button type="button" class="form-group" id="addAlbTagFilterSearch" rowId=""> Buscar </button>
+			<div class="form-group filterSearchDiv" id="addAlbTagFilteredResultsSelected">
+			
+			</div>
+			<div class="form-group filterSearchDiv" id="addAlbTagFilteredResults">
+			
+			</div>
+          </div>  
+          
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siAgregarAlbum" data-dismiss="modal" href="Javascript:;" onClick="">Agregar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Artista -->
+<div id="modalAgregarArtista" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="modalArtistaTitulo">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+		  <div class="form-group">
+            <label for="addArtistaName">Nombre del artista:</label>
+            <input type="text" class="form-control" id="addArtistaName">
+          </div>
+		  <div class="form-group">
+            <label for="addArtistaApellido">Apellido del artista:</label>
+            <input type="text" class="form-control" id="addArtistaApellido">
+          </div>
+		  <div class="form-group">
+            <label for="addArtistaFecha">Fecha de nacimiento:</label>
+            <input type="text" class="form-control" id="addArtistaFecha">
+          </div>
+		  <div class="form-group">
+            <label for="addArtistaPais">Pais de origen:</label>
+            <input type="text" class="form-control" id="addArtistaPais">
+          </div>
+		  <div class="form-group">
+            <label for="addArtistaImage">URL de imagen:</label>
+            <input type="text" class="form-control" id="addArtistaImage">
+          </div>
+		</form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siAgregarArtista" data-dismiss="modal" href="Javascript:;" onClick="">Agregar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Soundtrack -->
+<div id="modalAgregarSoundtrack" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title" id="modalSoundtrackTitulo">Agregar</h4>
+      </div>
+      <div class="modal-body">
+        <form action="">
+		  <div class="form-group">
+            <label for="addSoundtrackDisc">Numero de disco:</label>
+            <input type="text" class="form-control" id="addSoundtrackDisc">
+          </div>
+		  <div class="form-group">
+            <label for="addSoundtrackNumber">Numero del soundtrack:</label>
+            <input type="text" class="form-control" id="addSoundtrackNumber">
+          </div>
+          <div class="form-group">
+            <label for="addSoundtrackName">Nombre del soundtrack:</label>
+            <input type="text" class="form-control" id="addSoundtrackName">
+          </div>
+          <div class="form-group">
+            <label for="addSoundtrackFile">Direccion del audio:</label>
+            <input type="text" class="form-control" id="addSoundtrackFile">
+          </div>
+		  <div class="form-group" id="addStAlbumFilterDiv">
+            <label for="addStAlbumFilterInput"> Album al que pertenece: </label>
+            <input type="text" placeholder="Buscar.." class="form-control" id="addStAlbumFilterInput">
+			<button type="button" class="form-group" id="addStAlbumFilterSearch" rowId=""> Buscar </button>
+			<div class="form-group" id="addStAlbumFilteredResults">
+			
+			</div>
+          </div>
+		  <div class="form-group" id="addStArtistFilterDiv">
+            <label for="addStArtistFilterInput"> Interpretes colaboradores: </label>
+            <input type="text" placeholder="Buscar.." class="form-control" id="addStArtistFilterInput">
+			<button type="button" class="form-group" id="addStArtistFilterSearch" rowId=""> Buscar </button>
+			<div class="form-group" id="addStArtistFilteredResultsSelected">
+			
+			</div>
+			<div class="form-group" id="addStArtistFilteredResults">
+			
+			</div>
+          </div>
+		  <div class="form-group" id="addStTagFilterDiv">
+            <label for="addStTagFilterInput"> Tags: </label>
+            <input type="text" placeholder="Buscar.." class="form-control" id="addStTagFilterInput">
+			<button type="button" class="form-group" id="addStTagFilterSearch" rowId=""> Buscar </button>
+			<div class="form-group" id="addStTagFilteredResultsSelected">
+			
+			</div>
+			<div class="form-group" id="addStTagFilteredResults">
+			
+			</div>
+          </div>
+          
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siAgregarSoundtrack" data-dismiss="modal" href="Javascript:;" onClick="">Agregar</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,14 @@
 <?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "ostlibrary";
+$conn = new mysqli($servername, $username, $password, $dbname);
+//Check connection
+if($conn->connect_error){
+	die("Conecction failed: " . $conn->connect_error);
+}
+
 $isLoggedIn = "false";
 if(isset($_SESSION["loggedin"]))
 	$isLoggedIn = $_SESSION["loggedin"];
@@ -51,29 +61,35 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 </div>
 <!-- Chat Input -->
 <div class="ostguessblock blockbottomright">
-    <form id="">
-    	<div class="form-group insideblock">
-    		<label for="guessInput">Make a guess: </label>
-        	<input type="text" class="form-control" id="guessInput">
-            <div id="guessesDropdown" class="dropdown-content">
-              <div class="guessSource"><a href="#home">Home</a></div>
-              <div class="guessSource"><a href="#about">About</a></div>
-              <div class="guessSource"><a href="#contact">Contact</a></div>
-              <div class="guessSource"><a href="#1">Killer Instinct</a></div>
-              <div class="guessSource"><a href="#2">Donkey Kong Country</a></div>
-              <div class="guessSource"><a href="#3">Celeste</a></div>
-              <div class="guessSource"><a href="#4">My Hero Academia</a></div>
-              <div class="guessSource"><a href="#5">Cowboy Bebop</a></div>
-            </div>
+    <form id="guessForm">
+    	<div class="form-group insideblock" id="guessInputDiv">
+        	<p>Make a guess:</p>
+    		<div class="ui fluid search selection dropdown">
+              <input type="hidden" name="country" id="">
+              <i class="dropdown icon"></i>
+              <div class="default text">Select a source</div>
+              <div class="menu">
+                  <?php
+				  	$sql = "SELECT * FROM source ORDER BY name";
+					$result = $conn->query($sql);
+					while($row = $result->fetch_assoc()){
+						echo '<div class="item" data-value="'. $row["id"] .'"><i></i>'. $row["name"] .'</div>';
+					}
+				  ?>
+              </div>
+           </div>
         </div>
     </form>
 </div>
 
-</div>
-
-
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/Semantic-UI-CSS-master/semantic.min.css">
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script src="css/Semantic-UI-CSS-master/semantic.min.js"></script>
 <script>
 
 	Pusher.logToConsole = true;	//Solo mantener en debugeo
@@ -107,6 +123,10 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 		});
 	});
 	
+	$(function() {
+    	$('.ui.dropdown').dropdown();
+	});
+	
 	$("#guessForm").submit(function(event) {
     	event.preventDefault();
 		makeAGuess(1);
@@ -114,36 +134,6 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 	
 	function makeAGuess(id){//Recive el id de el source que va a adivinar
 		//TODO: manda un ajax a un php que checa si la respuesta es correcta y les responde a todos en la sala
-	}
-	
-	function guessFilterFunction() {
-		/*var input, filter, ul, li, a, i;
-		input = document.getElementById("guessInput");
-		filter = input.value.toUpperCase();
-		div = document.getElementById("guessesDropdown");
-		a = div.getElementsByTagName("a");
-		for (i = 0; i < a.length; i++) {
-			if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-				a[i].style.display = "";
-			} else {
-				a[i].style.display = "none";
-			}
-		}*/
-		
-		var input, filter, ul, li, a, i;
-		input = document.getElementById("guessInput");
-		filter = input.value.toUpperCase();
-		div = document.getElementById("guessesDropdown");
-		source = div.getElementsByClassName("guessSource");
-		//TODO: acomodar a que jale con los divs de source
-		for (i = 0; i < a.length; i++) {
-			if (a[i].innerHTML.toUpperCase().indexOf(filter) > -1) {
-				a[i].style.display = "";
-			} else {
-				a[i].style.display = "none";
-			}
-		}
-		
 	}
 </script>
 </body>

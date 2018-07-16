@@ -32,11 +32,9 @@ $sql = "SELECT * FROM usuario WHERE name='". $user ."' AND pass='". $pass."'";
 $result = $conn->query($sql);
 
 if($result->num_rows>0){
-	$jsondata["success"]["message"] = SPRINTF("Se han encontrado %d datos", $result->num_rows);
-	$jsondata["data"]["datos"] = array();
-	$jsondata["username"] = $user;
+	$jsondata["success"] = true;
 	while( $row = $result->fetch_object() ) {
-		$jsondata["data"]["datos"][] = $row;	
+		$jsondata["data"]["user"] = $row;	
 	}
 } else {
 	$jasondata["success"] = false;

@@ -21,8 +21,8 @@ if(isset($_SESSION["loggedin"]))
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-  <link rel="stylesheet" href="css/main.css">
-  <link rel="stylesheet" href="css/animate.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/animate.css">
 
 </head>
 
@@ -65,10 +65,10 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
     	<div class="form-group insideblock" id="guessInputDiv">
         	<p>Make a guess:</p>
     		<div class="ui fluid search selection dropdown">
-              <input type="hidden" name="country" id="">
+              <input type="hidden" name="country" id="hiddenGuessInput">
               <i class="dropdown icon"></i>
               <div class="default text">Select a source</div>
-              <div class="menu">
+              <div class="menu" id="guessSelectMenu">
                   <?php
 				  	$sql = "SELECT * FROM source ORDER BY name";
 					$result = $conn->query($sql);
@@ -78,18 +78,19 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 				  ?>
               </div>
            </div>
+		   <button type="submit" class="btn btn-primary" id="guessSubmit">Guess</button>
         </div>
     </form>
 </div>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
-<link rel="stylesheet" type="text/css" href="css/Semantic-UI-CSS-master/semantic.min.css">
+<link rel="stylesheet" type="text/css" href="../css/Semantic-UI-CSS-master/semantic.min.css">
 <script
   src="https://code.jquery.com/jquery-3.1.1.min.js"
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
   crossorigin="anonymous"></script>
-<script src="css/Semantic-UI-CSS-master/semantic.min.js"></script>
+<script src="../css/Semantic-UI-CSS-master/semantic.min.js"></script>
 <script>
 
 	Pusher.logToConsole = true;	//Solo mantener en debugeo
@@ -98,7 +99,7 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 	  wsHost: 'ws.pusherapp.com',
 	  httpHost: 'sockjs.pusher.com',
 	  encrypted: true,
-	  authEndpoint: 'pusher/pusher_auth.php'//Lugar donde va a autenticar a los usuarios
+	  authEndpoint: '../pusher/pusher_auth.php'//Lugar donde va a autenticar a los usuarios
 	});
 	//Se subscrive al canal de guesses y hago una funcion para responder
 	var channel = pusher.subscribe('private-guess-channel');
@@ -108,10 +109,20 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 	});
 	//Aqui responde a la respuesta de ostguessmanager que le da atodos en la sala
 	channel.bind('client-globalresponse', function(data) {
-	  alert(JSON.stringify(data));
+		var html = "<p>";
+		if(!data["isright"]){
+			html += data["username"] + ": " + data["message"];
+		} else {
+			html += data["username"] + " got the correct answer.";
+		}
+		html += "</p>";
+		$(".guessChat").append(html);
+		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
 	}); 
 	
 	$(document).ready(function(event){
+		connectToChannel();
+		
 		$("#guessInput").on("keyup", function(){
 			if($(this).val().length >= 3){
 				$("#guessesDropdown").addClass("show");
@@ -123,18 +134,43 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 		});
 	});
 	
-	$(function() {
-    	$('.ui.dropdown').dropdown();
-	});
+	function connectToChannel(){
+		
+	}
 	
 	$("#guessForm").submit(function(event) {
     	event.preventDefault();
-		makeAGuess(1);
+		makeAGuess();
 	});
 	
-	function makeAGuess(id){//Recive el id de el source que va a adivinar
+	function makeAGuess(){//Recive el id de el source que va a adivinar
 		//TODO: manda un ajax a un php que checa si la respuesta es correcta y les responde a todos en la sala
+		var id = $(".item.active.selected").attr("data-value");
+		var datos = {
+			"userid" : 4, ///TODO: usar la id del usuario conectado
+			"guessid" : id,
+			"guessroomid" : 1 //Cambiar por el id del cuarto
+		}
+		$.ajax({
+			data: datos,
+			url: "../ostguess/ostguessmanager.php",
+			type: "post",
+			success: function (response){
+				
+			},
+			error: function(event,xhr,options,exc){
+				console.log("ajax_error_can't_send_guess");
+				console.log(event);
+				console.log(xhr);
+				console.log(options);
+				console.log(exc);
+			}
+		});
 	}
+	
+	$(function() {
+    	$('.ui.dropdown').dropdown();
+	});
 </script>
 </body>
 

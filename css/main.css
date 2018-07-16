@@ -104,6 +104,7 @@ html,body,.container {
 	background-color:#FFFFFF;
 	width:36.8%;
 	padding:1%;
+	box-shadow: 0px 0px 5px grey;
 }
 
 .blocktopleft{
@@ -137,6 +138,9 @@ html,body,.container {
 	height:100%;
 	overflow: auto;
 }
+.guessChat > p{
+	float:bottom
+}
 
 .dropdown-content {
     display: none;
@@ -157,3 +161,54 @@ html,body,.container {
 }
 
 .show {display: block;}
+
+#guessSubmit{
+	margin-top:2%
+}
+
+.mainmenu{
+	background-color:#FFFFFF;
+	width:50%;
+	padding:1%;
+	box-shadow: 0px 0px 5px grey;
+	margin: 0 auto;
+	overflow: auto;
+}
+
+.roomItemview{
+	margin:5px auto;
+	float:left;
+	width: 100%;
+	box-shadow: 0px 0px 2px #0a0908;
+}
+
+.roomItemleft{
+	width:75%;
+	height:50px;
+	float:left;
+	text-align:center;
+	display:table;
+}
+
+.roomItemright{
+	width:25%;
+	height:50px;
+	float:left;
+	text-align:center;
+	padding:8px 0;
+	display:table;
+}
+
+.btn, .btn:hover, .btn:visited {
+    background-color: #22333B !important;
+	color:#F2F4F3 !important;
+}
+
+.btn:hover{
+	background-color: #36454c !important;
+	color:#F2F4F3 !important;
+}
+.btn:active{
+	background-color: #5e6a70 !important;
+	color:#F2F4F3 !important;
+}

@@ -7,14 +7,13 @@ if(isset($_SESSION["loggedin"]))
 <!doctype html>
 <html>
 <head>
-<title>OST Library</title>
+  <title>OST Library</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/animate.css">
   
-<title>Untitled Document</title>
 </head>
 
 <body>
@@ -158,8 +157,8 @@ if(isset($_SESSION["loggedin"]))
 				if(json.success)
 				{
 					$.session.set('loggedin', 'true');
-					$.session.set('username', json["user"]);
-					console.log(json.success);
+					$.session.set('username', json["user"]["name"]);
+					$.session.set('userid', json["user"]["id"]);
 					location.reload();
 				}
 				else

@@ -78,14 +78,40 @@ if(isset($_SESSION["loggedin"]))
   <div id="joinRoom" class="animated" style="display: none;">
     <div style="width:100%">
 	  <h3> Unirse a una sala </h3>
-	  <button  type="button" class="btn btn-default" id="backbtn2">Regresar</button>
+	  <button type="button" class="btn btn-default" id="backbtn2">Regresar</button>
 	</div>
 	<div id="roomDisplay">
 	
 	</div>
   </div>
 </div>
+</div>
 
+<!-- Modales -->
+
+<div id="modalJoinRoom" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="roomPass"> Contraseña: </label>
+            <input type="text" class="form-control" id="roomPass">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="siEliminar" href="Javascript:;" onClick="">Si</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
@@ -200,7 +226,7 @@ if(isset($_SESSION["loggedin"]))
 						"<p> de: "+ datos[i]["username"] +" </p>"+
 					"</div>"+
 					"<div style='background-color:#F2F4F3;' class='roomItemright'>"+
-						"<button type='button' class='btn joinRoom' style='display:table-cell; vertical-align:middle;' href='Javascript:;' onClick='joinRoom("+ datos[i]['id'] +"); return false;'> Join </button>"+
+						"<button type='button' class='btn joinRoom' style='display:table-cell; vertical-align:middle;' data-toggle='modal' data-target='#modalJoinRoom'> Join </button>"+
 					"</div>"+
 				"</div>";
 				i++;
@@ -234,6 +260,23 @@ if(isset($_SESSION["loggedin"]))
 	
 	function joinRoom(id){
 		console.log(id);
+		var datos = {
+			"userid" : $.session.get("userid"),
+			"roomid" : id,
+			"pass" : "0"
+		}
+		$.ajax({
+			url: "re/joinRoomRequest.php",
+			type: "post",
+			success: function(response){
+				if(response.success){
+						
+				}
+				else{
+					alert(response.message);	
+				}
+			}
+		})
 		///TODO: hacer que el usuario se redireccione a room.php si un ajax regresa succes
 	}
 	

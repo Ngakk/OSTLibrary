@@ -25,16 +25,6 @@ if(isset($_SESSION["loggedin"]))
   <link rel="stylesheet" href="../css/animate.css">
 
 </head>
-
-<?php
-/*
-require 'vendor/autoload.php';
-
-$pusher = new Pusher\Pusher("242c1ebc2f45447381e3", "14a36ffce25dde568753", "553238", array('cluster' => 'mt1'));
-
-$pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'hello world'));
-*/
-?>
 <body>
 
 <div style="background-color: #F2F4F3; height:100%">
@@ -59,13 +49,13 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 <div class="ostguessblock blockbottomleft">
     
 </div>
-<!-- Chat Input -->
+<!-- Chat Input V1-->
 <div class="ostguessblock blockbottomright">
     <form id="guessForm">
     	<div class="form-group insideblock" id="guessInputDiv">
         	<p>Make a guess:</p>
     		<div class="ui fluid search selection dropdown">
-              <input type="hidden" name="country" id="hiddenGuessInput">
+              <input type="hidden" id="hiddenGuessInput">
               <i class="dropdown icon"></i>
               <div class="default text">Select a source</div>
               <div class="menu" id="guessSelectMenu">
@@ -145,6 +135,8 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 	
 	function makeAGuess(){//Recive el id de el source que va a adivinar
 		//TODO: manda un ajax a un php que checa si la respuesta es correcta y les responde a todos en la sala
+		//va a medias
+		console.log("guess try");
 		var id = $(".item.active.selected").attr("data-value");
 		var datos = {
 			"userid" : 4, ///TODO: usar la id del usuario conectado
@@ -156,7 +148,7 @@ $pusher->trigger('private-guess-channel', 'client-guess', array('message' => 'he
 			url: "../ostguess/ostguessmanager.php",
 			type: "post",
 			success: function (response){
-				
+				console.log("guess success");
 			},
 			error: function(event,xhr,options,exc){
 				console.log("ajax_error_can't_send_guess");

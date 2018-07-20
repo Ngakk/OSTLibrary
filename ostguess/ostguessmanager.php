@@ -45,7 +45,7 @@ $song = $resultsong->fetch_assoc();
 if($song["sourceid"] == $guessid){
 	//correct answer
 	$message = array('message' => "", 'username' => $user["name"], 'isright' => true);
-	$pusher->trigger('private-guess-channel', 'client-globalresponse', $message);
+	$pusher->trigger('guess-channel-'.$guessroomid, 'client-global-response', $message);
 }
 else{
 	//bad answer
@@ -53,7 +53,7 @@ else{
 	$guessresponse = $conn->query($sqlguess);
 	$source = $guessresponse->fetch_assoc();
 	$message = array('message' => $source["name"], 'username' => $user["name"], 'isright' => false);
-	$pusher->trigger('private-guess-channel', 'client-globalresponse', $message);
+	$pusher->trigger('guess-channel-'.$guessroomid, 'client-global-response', $message);
 }
 
 ?>

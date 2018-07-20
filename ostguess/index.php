@@ -99,7 +99,7 @@ if(isset($_SESSION["loggedin"]))
 	  <label for="roomName">Nombre de la sala:</label>
 	  <input type="text" id="roomName" class="form-control">
 	  <label for="roomPassword">Contraseña:</label>
-	  <input type="roomPassword" id="password" class="form-control">
+	  <input type="password" id="roomPassword" class="form-control">
 	  <button style="margin-top:5px" type="submit" class="btn btn-default">Crear</button>
 	</form>
   </div>
@@ -130,11 +130,9 @@ if(isset($_SESSION["loggedin"]))
 
 	$(document).ready(function(event){
 		if(typeof $.session.get('loggedin') == 'undefined'){
-			$.sesion.set('loggedin', "false");
+			$.session.set('loggedin', "false");
 		}
-		else{
-			console.log($.session.get('loggedin'));
-		}
+
 		if($.session.get('loggedin') == "false"){
 			$("#login").show();
 			$("#login").animateCss('fadeIn');
@@ -180,7 +178,7 @@ if(isset($_SESSION["loggedin"]))
 		
 		$(document).on("click", ".joinRoom", function(){
 			$("#joinRoomBtn").attr("roomId", $(this).attr("roomId"));
-			$('#modalJoinRoom').modal('show');
+			$('#modalJoinRoom').modal("show");
 		});
 		
 		$("#joinRoomBtn").click(function(){
@@ -234,7 +232,6 @@ if(isset($_SESSION["loggedin"]))
 		fetchRooms().then(function(data){
 			var html = "";
 			var datos = data.data;
-			console.log(datos);
 			var i = 0;
 			while(typeof datos[i] != "undefined"){
 				html +=
@@ -289,7 +286,8 @@ if(isset($_SESSION["loggedin"]))
 			type: "post",
 			success: function(response){
 				if(response.success){
-					
+					$.session.set("roomid", id);
+					window.location.href = "room.php"
 				}
 				else{
 					alert(response.message);

@@ -27,7 +27,7 @@ if(isset($_SESSION["loggedin"]))
 </head>
 <body>
 
-<div style="background-color: #F2F4F3; height:100%">
+<div id="theBidD" style="background-color: #F2F4F3; height:100%; display: none" >
 <nav class="navbar navbar-default menu">
 	<div class="col-sm-2"></div>
     <div class="col-md-8" id="navBardiv">
@@ -81,6 +81,7 @@ if(isset($_SESSION["loggedin"]))
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
   crossorigin="anonymous"></script>
 <script src="../css/Semantic-UI-CSS-master/semantic.min.js"></script>
+<script src="../js/jquerysession.js"></script>
 <script>
 
 	Pusher.logToConsole = true;	//Solo mantener en debugeo
@@ -92,13 +93,24 @@ if(isset($_SESSION["loggedin"]))
 	  authEndpoint: '../pusher/pusher_auth.php'//Lugar donde va a autenticar a los usuarios
 	});
 	//Se subscrive al canal de guesses y hago una funcion para responder
-	var channel = pusher.subscribe('private-guess-channel');
+	var channel = pusher.subscribe('guess-channel-' + $.session.get("roomid"));
 	channel.bind('pusher:subscription_succeeded', function() {
-	  var data = {"message" : "hello"}
-	  var triggered = channel.trigger('client-guess', data);
+		if(typeof $.session.get("roomid") != 'undefined'){
+			$("#theBidD").show();
+			console.log($.session.get("userid"));
+			console.log($.session.get("roomid"));
+			connectToRoom($.session.get("userid"), $.session.get("roomid"));
+		}
+		else{
+			window.location.replace("index.php");	
+		}
+	});
+	
+	channel.bind('pusher:subscription_failed', function(){
+			window.location.replace("index.php");
 	});
 	//Aqui responde a la respuesta de ostguessmanager que le da atodos en la sala
-	channel.bind('client-globalresponse', function(data) {
+	channel.bind('client-global-response', function(data) {
 		var html = "<p>";
 		if(!data["isright"]){
 			html += data["username"] + ": " + data["message"];
@@ -110,8 +122,12 @@ if(isset($_SESSION["loggedin"]))
 		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
 	}); 
 	
+	channel.bind('client-global-updateplayers', function(data){
+		console.log("other players:");
+		console.log(data);
+	});
+	
 	$(document).ready(function(event){
-		connectToChannel();
 		
 		$("#guessInput").on("keyup", function(){
 			if($(this).val().length >= 3){
@@ -124,8 +140,26 @@ if(isset($_SESSION["loggedin"]))
 		});
 	});
 	
-	function connectToChannel(){
-		
+	function connectToRoom(userid, roomid){
+		var datos = {
+			"userid" : userid,
+			"roomid" : roomid	
+		}
+		$.ajax({
+			data: datos,
+			url: "re/userJoinsRoom.php",
+			type: "post",
+			success: function(response){
+				console.log("connectToRoom success");
+			},
+			error: function(event, xhr, options, exc){
+				console.log("ajax_error_can't_join_room");
+				console.log(event);
+				console.log(xhr);
+				console.log(options);
+				console.log(exc);
+			}	
+		});
 	}
 	
 	$("#guessForm").submit(function(event) {

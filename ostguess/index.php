@@ -27,6 +27,34 @@ if(isset($_SESSION["loggedin"]))
 </head>
 <body>
 
+<!-- Modales -->
+
+<div id="modalJoinRoom" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title"></h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="roomPass"> Contraseña: </label>
+            <input type="text" class="form-control" id="roomPass">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+      	<button type="button" class="btn btn-default" id="joinRoomBtn">Join</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+<input type="text" id="tempPass">
+<!-- contenido -->
+
 <div style="background-color: #F2F4F3; height:100%">
 <nav class="navbar navbar-default menu">
 	<div class="col-sm-2"></div>
@@ -37,8 +65,9 @@ if(isset($_SESSION["loggedin"]))
     </div>
 	<div class ="col-sm-2"></div>
 </nav>
-
-<div class="mainmenu" id="mainmenu">
+<div class="col-sm-2"></div>
+<div class="mainmenu col-md-8" id="mainmenu">
+<div class="col-sm-2"></div>
 
   <div id="login" class="animated" style="display: none;">
 	<h3> Inicia sesion para poder jugar </h3>
@@ -79,39 +108,13 @@ if(isset($_SESSION["loggedin"]))
     <div style="width:100%">
 	  <h3> Unirse a una sala </h3>
 	  <button type="button" class="btn btn-default" id="backbtn2">Regresar</button>
-	</div>
+	  <button type="button" data-toggle="modal" data-target="#modalJoinRoom">Open Modal</button>
+	  </div>
 	<div id="roomDisplay">
 	
 	</div>
   </div>
 </div>
-</div>
-
-<!-- Modales -->
-
-<div id="modalJoinRoom" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title"></h4>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label for="roomPass"> Contraseña: </label>
-            <input type="text" class="form-control" id="roomPass">
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-      	<button type="button" class="btn btn-default" id="siEliminar" href="Javascript:;" onClick="">Si</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
@@ -126,7 +129,12 @@ if(isset($_SESSION["loggedin"]))
 <script>
 
 	$(document).ready(function(event){
-		
+		if(typeof $.session.get('loggedin') == 'undefined'){
+			$.sesion.set('loggedin', "false");
+		}
+		else{
+			console.log($.session.get('loggedin'));
+		}
 		if($.session.get('loggedin') == "false"){
 			$("#login").show();
 			$("#login").animateCss('fadeIn');
@@ -137,7 +145,6 @@ if(isset($_SESSION["loggedin"]))
 		}
 		
 		$("#newRoom").click(function(){
-			console.log("new room");
 			$("#menuoptions").animateCss('fadeOut', function(){
 				$("#menuoptions").hide();
 				$("#createRoom").show();
@@ -146,7 +153,6 @@ if(isset($_SESSION["loggedin"]))
 		});
 		
 		$("#oldRoom").click(function(){
-			console.log("new room");
 			$("#menuoptions").animateCss('fadeOut', function(){
 				$("#menuoptions").hide();
 				$("#joinRoom").show();
@@ -171,6 +177,15 @@ if(isset($_SESSION["loggedin"]))
 				$("#menuoptions").animateCss('fadeIn');
 			});
 		});
+		
+		$(document).on("click", ".joinRoom", function(){
+			$("#joinRoomBtn").attr("roomId", $(this).attr("roomId"));
+			$('#modalJoinRoom').modal('show');
+		});
+		
+		$("#joinRoomBtn").click(function(){
+			joinRoom($("#joinRoomBtn").attr("roomId"));
+		});
 	});
 	
 	$("#loginForm").submit(function(event) {
@@ -188,11 +203,14 @@ if(isset($_SESSION["loggedin"]))
 				//var obj = JSON.parse(json);
 				if(json.success)
 				{
+					console.log(json);
 					$.session.set('loggedin', 'true');
-					$.session.set('username', json["user"]["name"]);
-					$.session.set('userid', json["user"]["id"]);
+					$.session.set('username', json.data["user"]["name"]);
+					$.session.set('userid', json.data["user"]["id"]);
 					$("#login").animateCss("fadeOut", function(){
 						$("#login").hide();
+						$("#menuoptions").show();
+						$("#menuoptions").animateCss('fadeIn');
 					});
 					
 					$("#loginerror").animateCss("fadeOut", function(){
@@ -226,7 +244,7 @@ if(isset($_SESSION["loggedin"]))
 						"<p> de: "+ datos[i]["username"] +" </p>"+
 					"</div>"+
 					"<div style='background-color:#F2F4F3;' class='roomItemright'>"+
-						"<button type='button' class='btn joinRoom' style='display:table-cell; vertical-align:middle;' data-toggle='modal' data-target='#modalJoinRoom'> Join </button>"+
+						"<button type='button' class='btn joinRoom' style='display:table-cell; vertical-align:middle;' data-toggle='modal' data-target='#modalJoinRoom' roomId='"+ datos[i]["id"] +"'> Join </button>"+
 					"</div>"+
 				"</div>";
 				i++;
@@ -259,22 +277,28 @@ if(isset($_SESSION["loggedin"]))
 	}
 	
 	function joinRoom(id){
-		console.log(id);
 		var datos = {
 			"userid" : $.session.get("userid"),
 			"roomid" : id,
-			"pass" : "0"
+			"pass" : $("#tempPass").val()
 		}
+		console.log("joinRoom try " + datos);
 		$.ajax({
+			data: datos,
 			url: "re/joinRoomRequest.php",
 			type: "post",
 			success: function(response){
 				if(response.success){
-						
+					
 				}
 				else{
-					alert(response.message);	
+					alert(response.message);
 				}
+			},
+			error: function(p1, p2, p3){
+				console.log(p1);
+				console.log(p2);
+				console.log(p3);
 			}
 		})
 		///TODO: hacer que el usuario se redireccione a room.php si un ajax regresa succes

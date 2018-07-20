@@ -22,7 +22,6 @@ if(isset($_GET["userid"]) && isset($_GET["roomid"]) && isset($_GET["pass"])){
 }
 
 $sqlroom = 	"SELECT guessroom.* FROM guessroom LEFT JOIN (usuario LEFT JOIN userdetails ON usuario.id = userdetails.userid) ON guessroom.id = userdetails.guessroomid";
-echo $sqlroom;
 $resultroom = $conn->query($sqlroom);
 
 if($row = $resultroom->fetch_assoc()){

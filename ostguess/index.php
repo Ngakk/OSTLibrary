@@ -29,7 +29,7 @@ if(isset($_SESSION["loggedin"]))
 
 <!-- Modales -->
 
-<div id="modalJoinRoom" class="modal fade" role="dialog">
+<div id="modalJoinRoom" class="modal" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
@@ -40,8 +40,8 @@ if(isset($_SESSION["loggedin"]))
       <div class="modal-body">
         <form>
           <div class="form-group">
-            <label for="roomPass"> Contraseña: </label>
-            <input type="text" class="form-control" id="roomPass">
+            <label for="joinRoomPass"> Contraseña: </label>
+            <input type="password" class="form-control" id="joinRoomPass">
           </div>
         </form>
       </div>
@@ -67,7 +67,6 @@ if(isset($_SESSION["loggedin"]))
 </nav>
 <div class="col-sm-2"></div>
 <div class="mainmenu col-md-8" id="mainmenu">
-<div class="col-sm-2"></div>
 
   <div id="login" class="animated" style="display: none;">
 	<h3> Inicia sesion para poder jugar </h3>
@@ -99,7 +98,15 @@ if(isset($_SESSION["loggedin"]))
 	  <label for="roomName">Nombre de la sala:</label>
 	  <input type="text" id="roomName" class="form-control">
 	  <label for="roomPassword">Contraseña:</label>
-	  <input type="password" id="roomPassword" class="form-control">
+	  <input type="text" id="roomPassword" class="form-control">
+	  <label for="roomSize">Tamaño:</label>
+	  <select id="roomSize" class="form-control">
+		<?php for($i = 2; $i <= 8; $i++){echo '<option>'. $i .'</option>';}?>
+	  </select>
+	  <label for="roomLength">Gana el primero en llegar a:</label>
+	  <select id="roomLength" class="form-control">
+		
+	  </select>
 	  <button style="margin-top:5px" type="submit" class="btn btn-default">Crear</button>
 	</form>
   </div>
@@ -115,6 +122,7 @@ if(isset($_SESSION["loggedin"]))
 	</div>
   </div>
 </div>
+<div class="col-sm-2"></div>
 </div>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
@@ -141,6 +149,13 @@ if(isset($_SESSION["loggedin"]))
 			$("#menuoptions").show();
 			$("#menuoptions").animateCss('fadeIn');
 		}
+
+		setRoomMaxLength();
+		
+		$("#roomSize").change(function(){
+			console.log("room size changed to " + $(this).val());
+			setRoomMaxLength();
+		});
 		
 		$("#newRoom").click(function(){
 			$("#menuoptions").animateCss('fadeOut', function(){
@@ -179,14 +194,45 @@ if(isset($_SESSION["loggedin"]))
 		$(document).on("click", ".joinRoom", function(){
 			$("#joinRoomBtn").attr("roomId", $(this).attr("roomId"));
 			$('#modalJoinRoom').modal("show");
+			$('#modalJoinRoom').show();
 		});
 		
 		$("#joinRoomBtn").click(function(){
 			joinRoom($("#joinRoomBtn").attr("roomId"));
 		});
+		
+		$("#newRoomForm").submit(function(event){
+		event.preventDefault();
+		var datos = {
+			"name": $("#roomName").val(),
+			"pass": $("#roomPassword").val(),
+			"size": $("#roomSize").val(),
+			"creatorid": $.session.get("userid"),
+			"gamelength": $("#roomLength").val()
+		};
+		console.log(datos);
+		$.ajax({
+			data: datos,
+			url: "re/createRoom.php",
+			type: "post",
+			success: function(response){
+				if(response.success)
+				{
+					$("#joinRoomPass").val(datos["pass"]);
+					joinRoom(response.roomid);
+				} else {
+					alert(response.message);
+				}
+			},
+			error: function(p1, p2, p3){
+				console.log(p1);
+				console.log(p2);
+				console.log(p3);
+			}
+		});
 	});
-	
-	$("#loginForm").submit(function(event) {
+		
+		$("#loginForm").submit(function(event) {
     	event.preventDefault();
 		var credenciales = {
 			"username" : $("#username").val(),
@@ -225,6 +271,9 @@ if(isset($_SESSION["loggedin"]))
 				console.log("ajax_error");
 			}
 		});
+	});
+	
+		
 	});
 	
 	function loadRooms(){
@@ -277,7 +326,7 @@ if(isset($_SESSION["loggedin"]))
 		var datos = {
 			"userid" : $.session.get("userid"),
 			"roomid" : id,
-			"pass" : $("#tempPass").val()
+			"pass" : $("#joinRoomPass").val()
 		}
 		console.log("joinRoom try " + datos);
 		$.ajax({
@@ -300,6 +349,31 @@ if(isset($_SESSION["loggedin"]))
 			}
 		})
 		///TODO: hacer que el usuario se redireccione a room.php si un ajax regresa succes
+	}
+	
+	function setRoomMaxLength(){
+		var max = 0;
+		getMaxRoomLength($("#roomSize").val()).then(function(data){
+			max = data.maxLength;
+			$("#roomLength").html("");
+			for(var i = 1; i <= max; i++){
+				$("#roomLength").append("<option>" + i + "</option>");
+			}
+		});
+	}
+	
+	function getMaxRoomLength(size){
+		var datos = {
+			"size": size
+		}
+		return Promise.resolve($.ajax({
+			data: datos,
+			url: "re/getMaxRoomLength.php",
+			type: "post",
+			success: function(response){
+				
+			}
+		}));
 	}
 	
 	$.fn.extend({

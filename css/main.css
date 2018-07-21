@@ -99,34 +99,30 @@ html,body,.container {
 .filterSearchResult:hover {background-color: #ddd;}
 
 .ostguessblock{
-	position:relative;
-	float:left;
 	background-color:#FFFFFF;
-	width:36.8%;
 	padding:1%;
+	margin-top:1%;
 	box-shadow: 0px 0px 5px grey;
 }
 
-.blocktopleft{
-	height:50%;
-	left:12.5%;
-	top:6.5%
+.blocktrack{
+	
 }
 
-.blocktopright{
+.blockchat{
 	float:right;
 	height:50%;
 	top:6.5%;
 	right:12.5%;
 }
 
-.blockbottomleft{
+.blockinput{
 	height:30%;
 	left:12.5%;
 	top:9%;
 }
 
-.blockbottomright{
+.blockscoreb{
 	height:30%;
 	float:right;
 	right:12.5%;

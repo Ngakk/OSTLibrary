@@ -28,9 +28,16 @@ $sqluser = "SELECT name FROM usuario WHERE id = ". $userid;
 $resultuser = $conn->query($sqluser);
 $user = $resultuser->fetch_assoc();
 
-$sqlroom = "SELECT songtoguessid FROM guessroom WHERE id = ". $guessroomid;
+$sqlroom = "SELECT link_soundtrack_list.soundtrackid, guessroom.songinlist FROM guessroom LEFT JOIN link_soundtrack_list ON guessroom.stlistid = link_soundtrack_list.stlistid WHERE guessroom.id = ". $guessroomid ." ORDER BY link_soundtrack_list.id";
 $resultroom = $conn->query($sqlroom);
-$room = $resultroom->fetch_assoc();
+$i = 0;
+while($row = $resultroom->fetch_assoc()){
+	if($i >= $row["songinlist"])
+		break;
+	$i++;
+}
+
+echo $row["soundtrackid"];
 
 $sqlsong = "SELECT `soundtrack`.*, `source`.`id` AS sourceid, `source`.`name` AS sourcename, `album`.`name` AS albumname, `album`.`date` AS albumdate, `album`.`imageurl` AS albumimg, `album`.`rating` AS albumrating 
 FROM `soundtrack` 
@@ -38,7 +45,7 @@ LEFT JOIN `album`
 ON `album`.id = `soundtrack`.`albumid` 
 LEFT JOIN `source` 
 ON `album`.`sourceid` = `source`.`id` 
-WHERE `soundtrack`.id = ". $room["songtoguessid"];
+WHERE `soundtrack`.id = ". $row["soundtrackid"];
 $resultsong = $conn->query($sqlsong);
 $song = $resultsong->fetch_assoc();
 

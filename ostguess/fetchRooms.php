@@ -13,7 +13,8 @@ $sql = "SELECT guessroom.*, usuario.name AS username FROM guessroom LEFT JOIN us
 $result = $conn->query($sql);
 
 while($row = $result->fetch_assoc()){
-	$jsondata["data"][] = $row;
+	if($row["waiting"] == 1)
+		$jsondata["data"][] = $row;
 }
 
 $jsondata["success"] = true;

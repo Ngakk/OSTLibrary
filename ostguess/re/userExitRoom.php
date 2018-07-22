@@ -26,7 +26,7 @@ $sqlusername = "SELECT name FROM usuario WHERE id = ". $userid;
 $nameresult = $conn->query($sqlusername);
 $username = $nameresult->fetch_assoc()["name"];
 
-$sqluser = "UPDATE userdetails SET `guessroomid` = 0 WHERE `userid` = ". $userid;
+$sqluser = "UPDATE userdetails SET `guessroomid` = 0, `trackready` = 0 WHERE `userid` = ". $userid;
 if($conn->query($sqluser)){
 	$sqlplayers = "SELECT usuario.*, userdetails.profileimage FROM guessroom 
 	LEFT JOIN userdetails ON userdetails.guessroomid = guessroom.id 

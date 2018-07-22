@@ -85,7 +85,7 @@
 		preload: false
 	});
 	var connected = false;
-	Pusher.logToConsole = true;	//Solo mantener en debugeo
+	//Pusher.logToConsole = true;	//Solo mantener en debugeo
 	//Creacion de conexion con pusher
 	var pusher = new Pusher('242c1ebc2f45447381e3', {
 	  wsHost: 'ws.pusherapp.com',
@@ -153,8 +153,8 @@
 		
 	});
 	//El servidor le avisa al cliente que ya todos los usuarios cargaron y que ya va a empezar a tocar, se baja el audio de la cancion anterior y, despues de un corto delay, comienza la siguiente
-	channel.bind('global-trackready', function(data){
-		
+	channel.bind('global-alltracksready', function(data){
+		console.log("everyone is ready");
 	});
 	
 	$(document).ready(function(event){
@@ -179,6 +179,8 @@
 			event.preventDefault();
 			chat();
 		});
+		
+		loadCurrentSong();
 		//testing
 		$("#testload").click(function(){
 			sound.unload();
@@ -295,6 +297,66 @@
 				console.log(xhr);
 				console.log(options);
 				console.log(exc);
+			}
+		});
+	}
+	
+	function loadCurrentSong(){
+		var datos = {
+			"roomid": $.session.get("roomid")
+		};
+		$.ajax({
+			data: datos,
+			url: "re/getCurrentSong.php",
+			type: "post",
+			success: function(response){
+				if(response.success){
+					sound.unload();
+					sound = new Howl({
+						src: ['../' + response["song"]["file"]],
+						volume: 1.0,
+						loop: false,
+						autoplay: false,
+						html5: true,
+						onload: onTrackLoaded(),
+						onend: function(){
+						  console.log("track finished");	
+						}
+					});
+					sound.load();
+				}else{
+					console.log("failed to get song dir: ");
+					console.log(response["song"]);
+				}
+				
+			},
+			error: function(p1, p2, p3){
+				console.log("ajax_error_can't_get_current_song");
+				console.log(p1);
+				console.log(p2);
+				console.log(p3);
+			}
+		});
+	}
+	
+	function onTrackLoaded(){
+		console.log("track loaded");
+		var datos = {
+			"userid": $.session.get("userid"),
+			"roomid": $.session.get("roomid")
+		}
+		$.ajax({
+			data: datos,
+			url: "re/userLoadedTrack.php",
+			type: "post",
+			success: function(response){
+				
+			},
+			error: function(p1, p2, p3){
+				console.log("ajax_error_can't_send_on_track_loaded");
+				console.log(p1);
+				console.log(p2);
+				console.log(p3);
 			}
 		});
 	}

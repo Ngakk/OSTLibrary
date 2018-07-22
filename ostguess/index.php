@@ -23,13 +23,12 @@ if(isset($_SESSION["loggedin"]))
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/animate.css">
-
 </head>
 <body>
 
 <!-- Modales -->
 
-<div id="modalJoinRoom" class="modal" role="dialog">
+<div id="modalJoinRoom" class="modal fade" role="dialog">
   <div class="modal-dialog">
     <!-- Modal content-->
     <div class="modal-content">
@@ -38,10 +37,10 @@ if(isset($_SESSION["loggedin"]))
         <h4 class="modal-title"></h4>
       </div>
       <div class="modal-body">
-        <form>
+        <form id="modalJoinRoomForm">
           <div class="form-group">
             <label for="joinRoomPass"> Contraseña: </label>
-            <input type="password" class="form-control" id="joinRoomPass">
+            <input type="text" class="form-control" id="joinRoomPass">
           </div>
         </form>
       </div>
@@ -52,9 +51,7 @@ if(isset($_SESSION["loggedin"]))
     </div>
   </div>
 </div>
-<input type="text" id="tempPass">
 <!-- contenido -->
-
 <div style="background-color: #F2F4F3; height:100%">
 <nav class="navbar navbar-default menu">
 	<div class="col-sm-2"></div>
@@ -115,7 +112,7 @@ if(isset($_SESSION["loggedin"]))
     <div style="width:100%">
 	  <h3> Unirse a una sala </h3>
 	  <button type="button" class="btn btn-default" id="backbtn2">Regresar</button>
-	  <button type="button" data-toggle="modal" data-target="#modalJoinRoom">Open Modal</button>
+	  <button type="button" class="btn btn-default" id="reloadRoombtn">Recargar</button>
 	  </div>
 	<div id="roomDisplay">
 	
@@ -125,15 +122,13 @@ if(isset($_SESSION["loggedin"]))
 <div class="col-sm-2"></div>
 </div>
 
-<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
-<script src="https://js.pusher.com/4.1/pusher.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../css/Semantic-UI-CSS-master/semantic.min.css">
 <script
   src="https://code.jquery.com/jquery-3.1.1.min.js"
   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
   crossorigin="anonymous"></script>
-<script src="../css/Semantic-UI-CSS-master/semantic.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="../js/jquerysession.js"></script>
+<script src="../js/jquery.caret.js"></script>
 <script>
 
 	$(document).ready(function(event){
@@ -191,10 +186,14 @@ if(isset($_SESSION["loggedin"]))
 			});
 		});
 		
+		$("#reloadRoombtn").click(function(){
+			$("#roomDisplay").html("");
+			loadRooms();
+		});
+		
 		$(document).on("click", ".joinRoom", function(){
+			$("#joinRoomPass").val("");
 			$("#joinRoomBtn").attr("roomId", $(this).attr("roomId"));
-			$('#modalJoinRoom').modal("show");
-			$('#modalJoinRoom').show();
 		});
 		
 		$("#joinRoomBtn").click(function(){
@@ -273,6 +272,14 @@ if(isset($_SESSION["loggedin"]))
 		});
 	});
 		
+		$("#modalJoinRoomForm").submit(function(event){
+			event.preventDefault();
+			$("#joinRoomBtn").click();
+		});
+	
+		$('#modalJoinRoom').on('shown.bs.modal', function (e) {
+			$("#joinRoomPass").caretToStart();
+		});
 	});
 	
 	function loadRooms(){
@@ -294,7 +301,11 @@ if(isset($_SESSION["loggedin"]))
 				"</div>";
 				i++;
 			}
-			$("#roomDisplay").append(html);
+			if(i > 0)
+				$("#roomDisplay").append(html);
+			else{
+				$("#roomDisplay").append("<p>No rooms to show</p>");
+			}
 		});
 	}
 	
@@ -337,8 +348,13 @@ if(isset($_SESSION["loggedin"]))
 					$.session.set("roomid", id);
 					window.location.href = "room.html";
 				}
+				else if(!response.reload){
+					alert(response.message);
+				}
 				else{
 					alert(response.message);
+					$("#roomDisplay").html("");
+					loadRooms();
 				}
 			},
 			error: function(p1, p2, p3){
@@ -408,8 +424,6 @@ if(isset($_SESSION["loggedin"]))
 </html>
 
 <!-- TODO
-Hacer un boton de recargar al estar escogiendo a los cuartos
-Hacer que el cliente avise cuando ya cargo el track
 Ponerle un boton al dueño del juego (o a todos) de que esta listo
 Empezar la cancion cuando todos esten listos
 Hacer que de puntos, que salgan en el scoreboard y que cargue la siguiente
@@ -420,4 +434,10 @@ Hacer el display de la cancion cuando le atinan
 Hacer el cambio entre modo chat y modo guess
 Hacer registro de usuario
 Que el usuario pueda editar su perfil
+-->
+
+<!-- DONE
+arregle los modales del principio
+Hacer un boton de recargar al estar escogiendo a los cuartos
+Hacer que el cliente avise cuando ya cargo el track
 -->

@@ -43,8 +43,11 @@ if($conn->query($sqlInsertRoom)){
 		$stlistid = $lastid["lastid"];
 		
 		$updateRoom = "UPDATE guessroom SET stlistid = ". $stlistid ." WHERE id = ". $roomid;
+		$conn->query($updateRoom);
 		
-		$sqltracks = "SELECT * FROM soundtrack  ORDER BY RAND() LIMIT ". $gamelength;
+		$songsneeded = ($gamelength-1)*$size +1;
+		
+		$sqltracks = "SELECT * FROM soundtrack  ORDER BY RAND() LIMIT ". $songsneeded;
 		$resulttracks = $conn->query($sqltracks);
 		$everythingright = true;
 		while($rowtrack = $resulttracks->fetch_assoc()){

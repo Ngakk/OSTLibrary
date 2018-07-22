@@ -30,10 +30,17 @@ if($row = $resultroom->fetch_assoc()){
 		if($pass != $row["pass"]){
 			$jsondata["success"] = false;
 			$jsondata["message"] = "Wrong password";	
+			$jsondata["reload"] = false;
 		}
 		else if($resultroom->num_rows >= $row["size"]){
 			$jsondata["success"] = false;
 			$jsondata["message"] = "Room is full";	
+			$jsondata["reload"] = true;
+		}
+		else if($row["waiting"] == 0){
+			$jsondata["success"] = false;
+			$jsondata["message"] = "Game already started";
+			$jsondata["reload"] = true;
 		}
 		else{
 			$jsondata["success"] = true;
@@ -46,6 +53,7 @@ if($row = $resultroom->fetch_assoc()){
 else{
 	$jsondata["success"] = false;
 	$jsondata["message"] = "Room doesn't exist anymore";
+	$jsondata["reload"] = true;
 }
 
 header('Content-type: application/json; charset=utf-8');

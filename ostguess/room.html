@@ -11,12 +11,13 @@
 </head>
 <body>
 
-<div id="theBidD" class="container" style="background-color: #F2F4F3; height:100%; display: none" >
+<div id="theBidD" style="background-color: #F2F4F3; height:100%; display: none; overflow: hidden;">
 	<nav class="navbar navbar-default menu">
 		<div class="col-sm-2"></div>
 		<div class="col-md-8" id="navBardiv">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">OST Library</a>
+				<a class="navbar-right" href="#" id="navexit">Exit</a>
 			</div>
 		</div>
 		<div class="col-sm-2"></div>
@@ -28,17 +29,20 @@
 			<button type="button" class="btn" id="testload">Load</button>
 			<button type="button" class="btn" id="testplay">Play</button>
 		</div>
-		<!-- Chat -->
-		<div class="row ostguessblock">
-			<div class="form-control guessChat" id="guessChat"></div>
-		</div>
-		<!-- Game score-->
-		<div class="row ostguessblock">
-			
+		<!-- Game and chat -->
+		<div class="row" id="playerAndChat">
+			<!-- Game score-->
+			<div class="col-sm-4 ostguessblock" id="guessPlayers">
+				
+			</div>
+			<!-- Chat -->
+			<div class="col-sm-8 ostguessblock guessChatHolder">
+				<div class="form-control guessChat" id="guessChat"></div>
+			</div>
 		</div>
 		<!-- Chat Input V1-->
-		<div class="row ostguessblock">
-			<form id="guessForm">
+		<div class="row ostguessblock guessInput">
+			<form id="guessForm" style="display: none;">
 				<div class="form-group insideblock" id="guessInputDiv">
 					<p>Make a guess:</p>
 					<div class="ui fluid search selection dropdown">
@@ -49,6 +53,13 @@
 						  <div class="item" data-value="2"><i></i>Doki Doki Literature Club!</div><div class="item" data-value="3"><i></i>Donkey Kong Country</div><div class="item" data-value="1"><i></i>Killer Instinct</div><div class="item" data-value="5"><i></i>Megalo Box</div><div class="item" data-value="6"><i></i>My Hero Academia (Season 1)</div><div class="item" data-value="4"><i></i>Outwitters</div>					  </div>
 				   </div>
 				   <button type="submit" class="btn btn-primary" id="guessSubmit">Guess</button>
+				</div>
+			</form>
+			<form id="chatForm">
+				<div class="form-group insideblock" id="chatInputDiv">
+					<p>Chat with the other players:</p>
+					<input autocomplete="off" type="text" class="form-control" id="chatInput">
+				   <button type="submit" class="btn btn-primary" id="chatSubmit">Guess</button>
 				</div>
 			</form>
 		</div>
@@ -67,7 +78,6 @@
 <script src="../js/jquerysession.js"></script>
 <script src="../howler/dist/howler.js"></script>
 <script>
-
 	//Audio
 	var sound = new Howl({
 		src: [''],
@@ -100,8 +110,9 @@
 			console.log("connection fail");
 			window.location.replace("index.php");
 	});
+
 	//Aqui responde a la respuesta de ostguessmanager que le da atodos en la sala
-	channel.bind('client-global-response', function(data) {
+	channel.bind('global-response', function(data) {
 		var html = "<p>";
 		if(!data["isright"]){
 			html += data["username"] + ": " + data["message"];
@@ -113,21 +124,44 @@
 		$(".guessChat").append(html);
 		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
 	}); 
+	//Aqui llegan los mensajes de chat normales
+	channel.bind('global-chat', function(data){
+		console.log("chat recived");
+		var html = "<p>"+ data["username"] + ": " + data["message"] + "</p>";
+		$(".guessChat").append(html);
+		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
+	});
 	//Aqui se actualizan los jugadores en la sala
-	channel.bind('client-global-updateplayers', function(data){
+	channel.bind('global-updateplayers', function(data){
 		console.log("other players:");
 		console.log(data);
+		var html = "<p>"+ data["message"] +"</p>";
+		$(".guessChat").append(html);
+		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
+		html = "";
+		for(var i = 0; i < data["users"].length; i++){
+			var profileimage = data["users"][i]["profileimage"];
+			if(profileimage == "")
+				profileimage = "../img/defaultProfile.png";
+			html += '<div class="col-xs-4 guessPlayerItem">'+
+						'<img src="'+ profileimage +'" class="img-thumbnail img-responsive"> '+
+						'<p>'+ data["users"][i]["name"] +'</p>'+
+					'</div>';
+		}
+		$("#guessPlayers").html("");
+		$("#guessPlayers").append(html);
+		
+	});
+	//El servidor le avisa al cliente que ya todos los usuarios cargaron y que ya va a empezar a tocar, se baja el audio de la cancion anterior y, despues de un corto delay, comienza la siguiente
+	channel.bind('global-trackready', function(data){
+		
 	});
 	
-	//El servidor le avisa al cliente que ya todos los usuarios cargaron y que ya va a empezar a tocar, se baja el audio de la cancion anterior y, despues de un corto delay, comienza la siguiente
-	channel.bind('client-global-trackready', function(data){
-		
-	});
-
 	$(document).ready(function(event){
+		$("#navexit").click(function(){	exit(); });
 		
 		$("#guessInput").on("keyup", function(){
-			if($(this).val().length >= 3){
+			if($(this).val().length >= 1){
 				$("#guessesDropdown").addClass("show");
 				guessFilterFunction();
 			}
@@ -139,6 +173,11 @@
 		$("#guessForm").submit(function(event) {
 			event.preventDefault();
 			makeAGuess();
+		});
+		
+		$("#chatForm").submit(function(event){
+			event.preventDefault();
+			chat();
 		});
 		//testing
 		$("#testload").click(function(){
@@ -166,16 +205,9 @@
 		
 	});
 	
-	window.onbeforeunload = confirmExit;
-	function confirmExit()
-	{	
+	//asdasd
+	function exit(){
 		if(connected)
-			return "You have attempted to leave this page.  If you leave the page you will leave the current game and won't be able to join back.  Are you sure you want to exit this page?";
-	}
-	
-	window.addEventListener('unload', function(event) {
-		console.log("onunload");
-        if(connected)
 		{
 			var datos = {
 				"userid": $.session.get("userid"),
@@ -185,15 +217,13 @@
 				data: datos,
 				url: "re/userExitRoom.php",
 				type: "post",
-				beforeSend: function(){
-					console.log("before send");
-				},
 				success: function(response){
 					$.session.remove("roomid");
+					window.location.replace("index.php");
 				}
 			});
 		}
-    });
+	}
 	
 	function connectToRoom(userid, roomid){
 		var datos = {
@@ -218,14 +248,12 @@
 	}
 	
 	function makeAGuess(){//Recive el id de el source que va a adivinar
-		//TODO: manda un ajax a un php que checa si la respuesta es correcta y les responde a todos en la sala
-		//va a medias
 		console.log("guess try");
 		var id = $(".item.active.selected").attr("data-value");
 		var datos = {
-			"userid" : 4, ///TODO: usar la id del usuario conectado
+			"userid" : $.session.get("userid"), ///TODO: usar la id del usuario conectado
 			"guessid" : id,
-			"guessroomid" : 1 //Cambiar por el id del cuarto
+			"guessroomid" : $.session.get("roomid") //Cambiar por el id del cuarto
 		}
 		$.ajax({
 			data: datos,
@@ -233,6 +261,33 @@
 			type: "post",
 			success: function (response){
 				console.log("guess success");
+			},
+			error: function(event,xhr,options,exc){
+				console.log("ajax_error_can't_send_guess");
+				console.log(event);
+				console.log(xhr);
+				console.log(options);
+				console.log(exc);
+			}
+		});
+	}
+	
+	function chat(){
+		if($("#chatInput").val() == "")
+			return;
+		var datos = {
+			"username": $.session.get("username"),
+			"message" : $("#chatInput").val(),
+			"roomid" : $.session.get("roomid")
+		};
+		$("#chatInput").val("");
+		$.ajax({
+			data: datos,
+			url: "re/chat.php",
+			type: "post",
+			success: function (response){
+				console.log("chat success");
+				console.log(datos);
 			},
 			error: function(event,xhr,options,exc){
 				console.log("ajax_error_can't_send_guess");

@@ -27,8 +27,8 @@ if(isset($_GET["name"]) && isset($_GET["pass"]) && isset($_GET["size"]) && isset
 $hoy = getdate();
 $date = $hoy["year"]."-".$hoy["mon"]."-".$hoy["mday"];
 
-$sqlInsertRoom = "INSERT INTO `guessroom`(`id`, `name`, `pass`, `size`, `gamelength`, `stlistid`, `songinlist`, `creatorid`)
-	VALUES (NULL, '". $name ."', '". $pass ."' , ". $size ." , ". $gamelength ." ,0, 0, ". $creatorid .")";
+$sqlInsertRoom = "INSERT INTO `guessroom`(`id`, `name`, `pass`, `size`, `gamelength`, `stlistid`, `songinlist`, `creatorid`, `waiting`)
+	VALUES (NULL, '". $name ."', '". $pass ."' , ". $size ." , ". $gamelength .", 0, 0, ". $creatorid .", 1)";
 	
 if($conn->query($sqlInsertRoom)){
 	$sqllast = "SELECT LAST_INSERT_ID() AS lastid";
@@ -41,6 +41,9 @@ if($conn->query($sqlInsertRoom)){
 		$lastresult = $conn->query($sqllast);
 		$lastid = $lastresult->fetch_assoc();
 		$stlistid = $lastid["lastid"];
+		
+		$updateRoom = "UPDATE guessroom SET stlistid = ". $stlistid ." WHERE id = ". $roomid;
+		
 		$sqltracks = "SELECT * FROM soundtrack  ORDER BY RAND() LIMIT ". $gamelength;
 		$resulttracks = $conn->query($sqltracks);
 		$everythingright = true;

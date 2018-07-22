@@ -21,11 +21,12 @@ if(isset($_GET["userid"]) && isset($_GET["roomid"]) && isset($_GET["pass"])){
 	$pass = $_GET["pass"];
 }
 
-$sqlroom = 	"SELECT guessroom.* FROM guessroom LEFT JOIN (usuario LEFT JOIN userdetails ON usuario.id = userdetails.userid) ON guessroom.id = userdetails.guessroomid";
+$sqlroom = 	"SELECT guessroom.* FROM guessroom LEFT JOIN (usuario LEFT JOIN userdetails ON usuario.id = userdetails.userid) ON guessroom.id = userdetails.guessroomid WHERE guessroom.id = ". $roomid;
 $resultroom = $conn->query($sqlroom);
 
-if($resultroom->num_rows > 0){
-	if($row = $resultroom->fetch_assoc()){
+
+if($row = $resultroom->fetch_assoc()){
+	if($row["id"] != ""){
 		if($pass != $row["pass"]){
 			$jsondata["success"] = false;
 			$jsondata["message"] = "Wrong password";	

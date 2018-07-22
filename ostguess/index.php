@@ -272,7 +272,6 @@ if(isset($_SESSION["loggedin"]))
 			}
 		});
 	});
-	
 		
 	});
 	
@@ -336,7 +335,7 @@ if(isset($_SESSION["loggedin"]))
 			success: function(response){
 				if(response.success){
 					$.session.set("roomid", id);
-					window.location.href = "room.php"
+					window.location.href = "room.html";
 				}
 				else{
 					alert(response.message);
@@ -348,7 +347,7 @@ if(isset($_SESSION["loggedin"]))
 				console.log(p3);
 			}
 		})
-		///TODO: hacer que el usuario se redireccione a room.php si un ajax regresa succes
+		///TODO: hacer que el usuario se redireccione a room.html si un ajax regresa succes
 	}
 	
 	function setRoomMaxLength(){
@@ -407,3 +406,18 @@ if(isset($_SESSION["loggedin"]))
 </body>
 
 </html>
+
+<!-- TODO
+Hacer un boton de recargar al estar escogiendo a los cuartos
+Hacer que el cliente avise cuando ya cargo el track
+Ponerle un boton al dueño del juego (o a todos) de que esta listo
+Empezar la cancion cuando todos esten listos
+Hacer que de puntos, que salgan en el scoreboard y que cargue la siguiente
+Cuando se termine el juego, dar un tiempo de delay para que se salga la gente y luego empezar el siguiente juego
+Si se acaban las canciones posibles (no tengo tantas no manches) entonces detener el juego
+Hacer un heartbeat para saber si los usuarios se salieron de la manera adecuada, y si no sacarlos igual
+Hacer el display de la cancion cuando le atinan
+Hacer el cambio entre modo chat y modo guess
+Hacer registro de usuario
+Que el usuario pueda editar su perfil
+-->

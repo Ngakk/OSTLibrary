@@ -37,8 +37,6 @@ while($row = $resultroom->fetch_assoc()){
 	$i++;
 }
 
-echo $row["soundtrackid"];
-
 $sqlsong = "SELECT `soundtrack`.*, `source`.`id` AS sourceid, `source`.`name` AS sourcename, `album`.`name` AS albumname, `album`.`date` AS albumdate, `album`.`imageurl` AS albumimg, `album`.`rating` AS albumrating 
 FROM `soundtrack` 
 LEFT JOIN `album` 
@@ -52,7 +50,7 @@ $song = $resultsong->fetch_assoc();
 if($song["sourceid"] == $guessid){
 	//correct answer
 	$message = array('message' => "", 'username' => $user["name"], 'isright' => true);
-	$pusher->trigger('guess-channel-'.$guessroomid, 'client-global-response', $message);
+	$pusher->trigger('guess-channel-'.$guessroomid, 'global-response', $message);
 }
 else{
 	//bad answer
@@ -60,7 +58,7 @@ else{
 	$guessresponse = $conn->query($sqlguess);
 	$source = $guessresponse->fetch_assoc();
 	$message = array('message' => $source["name"], 'username' => $user["name"], 'isright' => false);
-	$pusher->trigger('guess-channel-'.$guessroomid, 'client-global-response', $message);
+	$pusher->trigger('guess-channel-'.$guessroomid, 'global-response', $message);
 }
 
 ?>

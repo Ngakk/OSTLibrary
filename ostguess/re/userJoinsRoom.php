@@ -26,12 +26,15 @@ $sqljoin = "UPDATE userdetails SET guessroomid = ". $roomid ." WHERE userid = ".
 if($conn->query($sqljoin)){
 	$sql = "SELECT usuario.*, userdetails.profileimage FROM guessroom LEFT JOIN userdetails ON userdetails.guessroomid = guessroom.id LEFT JOIN usuario ON usuario.id = userdetails.userid WHERE guessroom.id = ". $roomid;
 	$result = $conn->query($sql);
+	$username = "User";
 	while($row = $result->fetch_assoc()){
-		$jsondata["data"][] = $row;
+		$jsondata["data"]["users"][] = $row;
+		if($row["id"] == $userid)
+			$username = $row["name"];
 	}
 	$jsondata["success"] = true;
-	
-	$pusher->trigger('guess-channel-'. $roomid, 'client-global-updateplayers', $jsondata["data"]);
+	$jsondata["data"]["message"] = $username. " has joined the room"; 
+	$pusher->trigger('guess-channel-'. $roomid, 'global-updateplayers', $jsondata["data"]);
 }
 else{
 	$jsondata["success"] = false;	

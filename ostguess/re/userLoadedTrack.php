@@ -27,19 +27,34 @@ if($conn->query($sqlupdateuser)){
 	$roomresult = $conn->query($sqlroom);
 	$allready = true;
 	$count = 0;
+	$roomsize = 99;
+	$readycount = 0;
 	while($row = $roomresult->fetch_assoc()){
 		$count++;
+		$roomsize = $row["size"];
 		if($row["trackready"] == 0){
 			$allready = false;
-			break;
+		} else {
+			$readycount++;
 		}
-		$roomsize = $row["size"];
 	}
+	
+	$jsondata["readycount"] = $readycount;
+	$jsondata["count"] = $count;
+	$jsondata["roomsize"] = $roomsize;
+	
 	if($allready && $count == $roomsize)
 	{
+		$sqlupdateroom = "UPDATE guessroom SET waiting = 0 WHERE id = ". $roomid;
+		$conn->query($sqlupdateroom);
 		$pusher = new Pusher\Pusher("242c1ebc2f45447381e3", "14a36ffce25dde568753", "553238", array('cluster' => 'mt1'));
 		$pusher->trigger('guess-channel-'.$roomid, 'global-alltracksready', true);
 	}
 }
+
+header('Content-type: application/json; charset=utf-8');
+echo json_encode($jsondata, JSON_FORCE_OBJECT);
+
+$conn->close();
 
 ?>

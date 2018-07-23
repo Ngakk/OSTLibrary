@@ -8,7 +8,7 @@
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:hover,
 .navbar-default .navbar-nav > .active > a:focus {
-    color: #000;
+    color: #F2F4F3;
     background: #2E1760;
 }
 .navbar-default .navbar-brand{
@@ -146,15 +146,38 @@ html,body,.container {
 }
 
 .guessPlayerItem{
-	padding:0px 1% 0px 1%;
-	border:2px;
-	border-color:#22333b;
+	background-color:#22333B;
+	border-style: solid;
+	border-width: 2px;
+	border-radius: 2px;
+	border-color:#0A0908;
+	margin:1% auto;
 	text-align: center;
+	color:#F2F4F3;
 }
 
-.guessPlayerItem > p{
+.guessPlayerItem > img{
+	float:left;
+	border-style: solid;
+	border-width: 2px;
+	border-color:#F2F4F3;
+}
+
+.guessPlayerItem > div > p{
 	font-size:1vw;
 }
+
+.guessPlayerItem > div{
+	padding:5px;
+	display: inline-block;
+    vertical-align: middle;
+    float: none;
+}
+
+#songDetails > div >p{
+	margin: 0 auto;
+}
+
 .dropdown-content {
     display: none;
     position: absolute;
@@ -175,6 +198,10 @@ html,body,.container {
 
 #guessSubmit{
 	margin-top:2%
+}
+
+#songDetails{
+	
 }
 
 .mainmenu{

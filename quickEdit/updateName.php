@@ -9,15 +9,22 @@ if($conn->connect_error){
 	die("Conecction failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT guessroom.*, usuario.name AS username FROM guessroom LEFT JOIN usuario ON guessroom.creatorid = usuario.id";
-$result = $conn->query($sql);
-
-while($row = $result->fetch_assoc()){
-	if($row["waiting"] == 1)
-		$jsondata["data"][] = $row;
+if(isset($_POST["name"]) && isset($_POST["userid"])){
+	$userid = $_POST["userid"];
+	$name = $_POST["name"];
+}
+if(isset($_GET["name"]) && isset($_GET["userid"])){
+	$userid = $_GET["userid"];
+	$name = $_GET["name"];
 }
 
-$jsondata["success"] = true;
+$sql = "UPDATE usuario SET name = '". $name ."' WHERE id = ". $userid;
+if($conn->query($sql)){
+	$jsondata["success"] = true;
+}
+else{
+	$jsondata["success"] = false;
+}
 
 header('Content-type: application/json; charset=utf-8');
 echo json_encode($jsondata, JSON_FORCE_OBJECT);

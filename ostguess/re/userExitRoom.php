@@ -26,11 +26,11 @@ $sqlusername = "SELECT name FROM usuario WHERE id = ". $userid;
 $nameresult = $conn->query($sqlusername);
 $username = $nameresult->fetch_assoc()["name"];
 
-$sqluser = "UPDATE userdetails SET `guessroomid` = 0, `trackready` = 0 WHERE `userid` = ". $userid;
+$sqluser = "UPDATE userdetails SET `guessroomid` = 0, `trackready` = 0, `gamescore` = 0 WHERE `userid` = ". $userid;
 if($conn->query($sqluser)){
-	$sqlplayers = "SELECT usuario.*, userdetails.profileimage FROM guessroom 
+	$sqlplayers = "SELECT usuario.*, userdetails.profileimage, userdetails.gamescore FROM guessroom 
 	LEFT JOIN userdetails ON userdetails.guessroomid = guessroom.id 
-	LEFT JOIN usuario ON usuario.id = userdetails.userid WHERE guessroom.id = ". $roomid;
+	LEFT JOIN usuario ON usuario.id = userdetails.userid WHERE guessroom.id = ". $roomid ." ORDER BY userdetails.gamescore";
 	$result = $conn->query($sqlplayers);
 	$count = 0;
 	while($row = $result->fetch_assoc()){

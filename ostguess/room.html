@@ -11,32 +11,50 @@
 </head>
 <body>
 
-<div id="theBidD" style="background-color: #F2F4F3; height:100%; display: none; overflow: hidden;">
+<!--<button type="button" id="testcountdown">countdown</button>-->
+
+<div id="theBidD" style="background-color: #F2F4F3; height:100%; display: none;">
 	<nav class="navbar navbar-default menu">
-		<div class="col-sm-2"></div>
-		<div class="col-md-8" id="navBardiv">
+		<div class="col-md-2 col-xs-0" ></div>
+		<div class="col-md-8 col-xs-12" id="navBardiv">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="#">OST Library</a>
-				<a class="navbar-right" href="#" id="navexit">Exit</a>
 			</div>
+			<ul class="nav navbar-nav">
+			  <li><a href="#" id="navexit">Exit</a></li>
+			</ul>
 		</div>
-		<div class="col-sm-2"></div>
+		<div class="col-md-2 col-xs-0"></div>
 	</nav>
-	<div class="col-sm-2"></div>
-	<div class="col-md-8" style="height: 100%;">
+	<div class="col-md-2 col-xs-0"></div>
+	<div class="col-md-8 col-xs-12" style="height: 100%;">
 		<!-- Game -->
 		<div class="blocktrack row ostguessblock">
-			<button type="button" class="btn" id="testload">Load</button>
-			<button type="button" class="btn" id="testplay">Play</button>
+			<div id="songDetails"  style="display: none;">
+				<div class="col-sm-6">
+					<p id="songDisplay-Name"></p>
+					<p id="songDisplay-Source"></p>
+				</div>
+				<div class="col-sm-6">
+					<p id="songDisplay-Album"></p>
+					<p id="songDisplay-Date"></p>	
+				</div>
+			</div>
+			<div id="soundHidden">
+			
+			</div>
+			<div id="songCountdown" style="text-align:center; display: none;">
+				<h3> 3 </h3>
+			</div>
 		</div>
 		<!-- Game and chat -->
 		<div class="row" id="playerAndChat">
 			<!-- Game score-->
-			<div class="col-sm-4 ostguessblock" id="guessPlayers">
+			<div class="col-md-4 col-xs-12 ostguessblock" id="guessPlayers">
 				
 			</div>
 			<!-- Chat -->
-			<div class="col-sm-8 ostguessblock guessChatHolder">
+			<div class="col-md-8 col-xs-12 ostguessblock guessChatHolder">
 				<div class="form-control guessChat" id="guessChat"></div>
 			</div>
 		</div>
@@ -46,25 +64,25 @@
 				<div class="form-group insideblock" id="guessInputDiv">
 					<p>Make a guess:</p>
 					<div class="ui fluid search selection dropdown">
-					  <input type="hidden" id="hiddenGuessInput">
 					  <i class="dropdown icon"></i>
+					  <input class="search" id="guessInput" autocomplete="off" tabindex="0">
 					  <div class="default text">Select a source</div>
 					  <div class="menu" id="guessSelectMenu">
-						  <div class="item" data-value="2"><i></i>Doki Doki Literature Club!</div><div class="item" data-value="3"><i></i>Donkey Kong Country</div><div class="item" data-value="1"><i></i>Killer Instinct</div><div class="item" data-value="5"><i></i>Megalo Box</div><div class="item" data-value="6"><i></i>My Hero Academia (Season 1)</div><div class="item" data-value="4"><i></i>Outwitters</div>					  </div>
+					  </div>
 				   </div>
-				   <button type="submit" class="btn btn-primary" id="guessSubmit">Guess</button>
 				</div>
+				<button style="float:left" type="submit" class="btn btn-primary" id="guessSubmit">Guess</button>
 			</form>
 			<form id="chatForm">
 				<div class="form-group insideblock" id="chatInputDiv">
 					<p>Chat with the other players:</p>
 					<input autocomplete="off" type="text" class="form-control" id="chatInput">
-				   <button type="submit" class="btn btn-primary" id="chatSubmit">Guess</button>
 				</div>
+				<button style="float:left" type="submit" class="btn btn-primary" id="chatSubmit">chat</button>
 			</form>
 		</div>
 	</div>
-	<div class="col-sm-2"></div>
+	<div class="col-md-2 col-xs-0"></div>
 </div>
 
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
@@ -77,6 +95,7 @@
 <script src="../css/Semantic-UI-CSS-master/semantic.min.js"></script>
 <script src="../js/jquerysession.js"></script>
 <script src="../howler/dist/howler.js"></script>
+<script src="../js/jquery.caret.js"></script>
 <script>
 	//Audio
 	var sound = new Howl({
@@ -85,6 +104,9 @@
 		preload: false
 	});
 	var connected = false;
+	var gameStarted = false;
+	var chatIsOn = true;
+	var song = [];
 	//Pusher.logToConsole = true;	//Solo mantener en debugeo
 	//Creacion de conexion con pusher
 	var pusher = new Pusher('242c1ebc2f45447381e3', {
@@ -94,10 +116,21 @@
 	  authEndpoint: '../pusher/pusher_auth.php'//Lugar donde va a autenticar a los usuarios
 	});
 	//Se subscrive al canal de guesses y hago una funcion para responder
+	
+	pusher.connection.bind('disconnected', function() {
+		console.log("byebye");
+	});
+	
 	var channel = pusher.subscribe('guess-channel-' + $.session.get("roomid"));
 	channel.bind('pusher:subscription_succeeded', function() {
 		if(typeof $.session.get("roomid") != 'undefined'){
 			$("#theBidD").show();
+			if(typeof $.session.get("gameStarted") == 'undefined'){
+				$.session.set("gameStarted", gameStarted);
+			}
+			else{
+				gameStarted = $.session.get("gameStarted");
+			}
 			connectToRoom($.session.get("userid"), $.session.get("roomid"));
 		}
 		else{
@@ -119,10 +152,15 @@
 		} else {
 			//Aqui te notifica cuando alguien ya le atinó, muestra los datos de la cancion y deja al jugador detenerla, mutearla, etc. mientras se carga la siguiente cancion
 			html += data["username"] + " got the correct answer.";
+			if(!data["finished"])
+				onSongGuessed(data["userid"], data["newscore"]);
 		}
 		html += "</p>";
 		$(".guessChat").append(html);
 		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
+		if(data["finished"]){
+			onGameFinish(data["userid"], data["username"], data["newscore"]);
+		}
 	}); 
 	//Aqui llegan los mensajes de chat normales
 	channel.bind('global-chat', function(data){
@@ -143,9 +181,10 @@
 			var profileimage = data["users"][i]["profileimage"];
 			if(profileimage == "")
 				profileimage = "../img/defaultProfile.png";
-			html += '<div class="col-xs-4 guessPlayerItem">'+
-						'<img src="'+ profileimage +'" class="img-thumbnail img-responsive"> '+
-						'<p>'+ data["users"][i]["name"] +'</p>'+
+			html += '<div class="row guessPlayerItem">'+
+						'<div class="col-md-3 col-xs-3"><img src="'+ profileimage +'" class="img-thumbnail img-responsive"> </div>'+
+						'<div class="col-md-5 col-xs-5"><p>'+ data["users"][i]["name"] +'</p></div>'+
+						'<div class="col-md-4 col-xs-4"><p id="userState'+ data["users"][i]["id"] +'">Score: <br>'+ data["users"][i]["gamescore"] +'</p></div>'+
 					'</div>';
 		}
 		$("#guessPlayers").html("");
@@ -155,20 +194,20 @@
 	//El servidor le avisa al cliente que ya todos los usuarios cargaron y que ya va a empezar a tocar, se baja el audio de la cancion anterior y, despues de un corto delay, comienza la siguiente
 	channel.bind('global-alltracksready', function(data){
 		console.log("everyone is ready");
+		setTimeout(countDownToPlay, 3000);
+		
+		if(!gameStarted)
+		{
+			$(".guessChat").append("<p> Game is about to start </p>");
+			gameStarted = true;
+			$.session.set("gameStarted", true);
+		}
+		
 	});
 	
 	$(document).ready(function(event){
-		$("#navexit").click(function(){	exit(); });
 		
-		$("#guessInput").on("keyup", function(){
-			if($(this).val().length >= 1){
-				$("#guessesDropdown").addClass("show");
-				guessFilterFunction();
-			}
-			else{
-				$("#guessesDropdown").removeClass("show");
-			}
-		});
+		$("#navexit").click(function(){	exit(); });
 		
 		$("#guessForm").submit(function(event) {
 			event.preventDefault();
@@ -179,35 +218,47 @@
 			event.preventDefault();
 			chat();
 		});
-		
-		loadCurrentSong();
+			
+		loadSources();
 		//testing
-		$("#testload").click(function(){
-			sound.unload();
-			sound = new Howl({
-				src: ['../music/k/killer_cuts/Yo_Check_This_Out!.mp3'],
-				volume: 1.0,
-				loop: false,
-				autoplay: false,
-				html5: true,
-				onload: function(){
-				  console.log("track loaded");
-				},
-				onend: function(){
-				  console.log("track finished");	
-				}
-			});
-			sound.load();
-			console.log("load start");
-		});
-		
-		$("#testplay").click(function(){
-			sound.play();
-		});
-		
 	});
 	
-	//asdasd
+	function onSongGuessed(id, score){
+		$("#userState"+id).html("Score: <br>"+score);
+		setTimeout(function(){
+			sound.fade(1, 0, 1000);
+		}, 3000);
+		setTimeout(loadCurrentSong, 4000);
+		switchInput();
+		showSong();
+	}
+	
+	function onGameFinish(id, name, score){
+		$("#userState"+id).html("Score: <br>"+score);
+		var html = "<p>" + name + " ha ganado el juego! </p>";
+		$(".guessChat").append(html);
+		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
+		resetGame();
+		switchInput();
+		showSong();
+	}
+	
+	function showSong(){
+		$("#songCountdown").hide();
+		$("#songDetails").show();
+		$("#songDisplay-Name").html("<strong>Name:</strong>"+song["name"]);
+		$("#songDisplay-Source").html("<strong>Fuente:</strong>"+song["sourcename"]);
+		$("#songDisplay-Album").html("<strong>Album:</strong>"+song["albumname"]);
+		$("#songDisplay-Date").html("<strong>Fecha:</strong>"+song["date"]);
+	}
+	
+	function resetGame(){
+		console.log("reset game");
+		var html = "<p>La sala se cerrara en 20 segundos</p>";
+		$(".guessChat").append(html);
+		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
+	}
+	
 	function exit(){
 		if(connected)
 		{
@@ -221,6 +272,7 @@
 				type: "post",
 				success: function(response){
 					$.session.remove("roomid");
+					$.session.remove("gameStarted");
 					window.location.replace("index.php");
 				}
 			});
@@ -238,6 +290,8 @@
 			type: "post",
 			success: function(response){
 				connected = true;
+				if(!gameStarted)
+					loadCurrentSong();
 			},
 			error: function(event, xhr, options, exc){
 				console.log("ajax_error_can't_join_room");
@@ -302,6 +356,7 @@
 	}
 	
 	function loadCurrentSong(){
+		sound.unload();
 		var datos = {
 			"roomid": $.session.get("roomid")
 		};
@@ -319,10 +374,15 @@
 						autoplay: false,
 						html5: true,
 						onload: onTrackLoaded(),
+						onfade: function(){
+							console.log("on fade");
+							sound.stop();
+						},
 						onend: function(){
 						  console.log("track finished");	
 						}
 					});
+					song = response["song"];
 					sound.load();
 				}else{
 					console.log("failed to get song dir: ");
@@ -350,7 +410,7 @@
 			url: "re/userLoadedTrack.php",
 			type: "post",
 			success: function(response){
-				
+				console.log(response.readycount + " ready of " + response.count + " counted from total of : "+ response.roomsize);
 			},
 			error: function(p1, p2, p3){
 				console.log("ajax_error_can't_send_on_track_loaded");
@@ -359,6 +419,79 @@
 				console.log(p3);
 			}
 		});
+	}
+	
+	function countDownToPlay(){
+		var t = 3000;
+		var f = setInterval(function(){
+			$("#songDetails").hide();
+			$("#songCountdown").show();
+			$("#songCountdown").html("<h3>" + (t/1000) + "</h3>");
+			if(t == 0){
+				clearInterval(f);
+				$("#songCountdown").hide();
+				switchInput();
+				sound.play();
+			}
+			t -= 1000;
+			
+		}, 1000);
+	}
+	
+	function countDownToClose(){
+		var t = 20000;
+		var f = setInterval(function(){
+			if(t == 0){
+				clearInterval(f);
+				exit();
+			}
+			t -= 1000;
+			
+		}, 1000);
+	}
+	
+	function switchInput(){
+		if(chatIsOn){
+			$("#chatForm").hide();
+			$("#guessForm").show("fast", function(){
+				$("#guessInput").caretToStart();
+			});
+		}
+		else{
+			$("#guessForm").hide();
+			$("#chatForm").show("fast", function(){
+				$("#chatInput").caretToStart();
+			});
+		}
+		chatIsOn = !chatIsOn;
+	}
+	
+	function loadSources(){
+		fetchSources().then(function(data){
+			var sources = data.data;
+			var i = 0;
+			var html = "";
+			while(typeof sources[i] != 'undefined'){
+				html += '<div class="item" data-value="'+ sources[i]["id"] +'">'+sources[i]["name"]+'</div>';
+					i++;
+			}
+			$("#guessSelectMenu").append(html);
+		});
+	}
+	
+	function fetchSources(){
+		return Promise.resolve($.ajax({
+			url: "re/fetchSources.php",
+			success: function(response){
+				
+			},
+			error: function(p1, p2, p3){
+				console.log("ajax_error_can't_fetch_sources");
+				console.log(p1);
+				console.log(p2);
+				console.log(p3);
+			}
+		}));
 	}
 	
 	$(function() {

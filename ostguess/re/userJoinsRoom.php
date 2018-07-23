@@ -24,7 +24,7 @@ $pusher = new Pusher\Pusher("242c1ebc2f45447381e3", "14a36ffce25dde568753", "553
 
 $sqljoin = "UPDATE userdetails SET guessroomid = ". $roomid ." WHERE userid = ". $userid;
 if($conn->query($sqljoin)){
-	$sql = "SELECT usuario.*, userdetails.profileimage FROM guessroom LEFT JOIN userdetails ON userdetails.guessroomid = guessroom.id LEFT JOIN usuario ON usuario.id = userdetails.userid WHERE guessroom.id = ". $roomid;
+	$sql = "SELECT usuario.*, userdetails.profileimage, userdetails.gamescore FROM guessroom LEFT JOIN userdetails ON userdetails.guessroomid = guessroom.id LEFT JOIN usuario ON usuario.id = userdetails.userid WHERE guessroom.id = ". $roomid ." ORDER BY userdetails.gamescore";
 	$result = $conn->query($sql);
 	$username = "User";
 	while($row = $result->fetch_assoc()){

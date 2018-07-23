@@ -55,15 +55,18 @@ if(isset($_SESSION["loggedin"]))
 <div style="background-color: #F2F4F3; height:100%">
 <nav class="navbar navbar-default menu">
 	<div class="col-sm-2"></div>
-    <div class="col-md-8" id="navBardiv">
+    <div class="col-md-8 container-fluid" id="navBardiv">
         <div class="navbar-header">
         	<a class="navbar-brand" href="#">OST Library</a>
         </div>
+		<ul class="nav navbar-nav navbar-right">
+		  <li id="profileButton" style="display: none;"><a href="#"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
+		</ul>
     </div>
 	<div class ="col-sm-2"></div>
 </nav>
-<div class="col-sm-2"></div>
-<div class="mainmenu col-md-8" id="mainmenu">
+<div class="col-md-2 col-xs-0"></div>
+<div class="mainmenu col-md-8 col-xs-12" id="mainmenu">
 
   <div id="login" class="animated" style="display: none;">
 	<h3> Inicia sesion para poder jugar </h3>
@@ -74,6 +77,7 @@ if(isset($_SESSION["loggedin"]))
 	  <input type="password" id="password" class="form-control">
 	  <button style="margin-top:5px" type="submit" class="btn btn-default">Login</button>
 	</form>
+	<p style="float: left">No tienes cuenta?</p>&nbsp<a href="../newAccount.html"> Crear una cuenta es 164% gratis sin costos adicionales y sin poner tu tarjeta de credito</a>
   </div>
   
   <div id="loginerror"  class="animated" style="display: none;">
@@ -119,7 +123,7 @@ if(isset($_SESSION["loggedin"]))
 	</div>
   </div>
 </div>
-<div class="col-sm-2"></div>
+<div class="col-md-2 col-xs-0"></div>
 </div>
 
 <script
@@ -143,9 +147,15 @@ if(isset($_SESSION["loggedin"]))
 		else{
 			$("#menuoptions").show();
 			$("#menuoptions").animateCss('fadeIn');
+			$("#profileButton").show();
+			$("#profileButton").animateCss('fadeIn');
 		}
 
 		setRoomMaxLength();
+		
+		$("#profileButton").click(function(){
+			window.location.href = "../profile.php?id="+$.session.get("userid");
+		});
 		
 		$("#roomSize").change(function(){
 			console.log("room size changed to " + $(this).val());
@@ -254,6 +264,8 @@ if(isset($_SESSION["loggedin"]))
 						$("#login").hide();
 						$("#menuoptions").show();
 						$("#menuoptions").animateCss('fadeIn');
+						$("#profileButton").show();
+						$("#profileButton").animateCss('fadeIn');
 					});
 					
 					$("#loginerror").animateCss("fadeOut", function(){
@@ -424,20 +436,24 @@ if(isset($_SESSION["loggedin"]))
 </html>
 
 <!-- TODO
-Ponerle un boton al dueño del juego (o a todos) de que esta listo
-Empezar la cancion cuando todos esten listos
-Hacer que de puntos, que salgan en el scoreboard y que cargue la siguiente
-Cuando se termine el juego, dar un tiempo de delay para que se salga la gente y luego empezar el siguiente juego
-Si se acaban las canciones posibles (no tengo tantas no manches) entonces detener el juego
 Hacer un heartbeat para saber si los usuarios se salieron de la manera adecuada, y si no sacarlos igual
 Hacer el display de la cancion cuando le atinan
-Hacer el cambio entre modo chat y modo guess
-Hacer registro de usuario
 Que el usuario pueda editar su perfil
+Que se vea en el cel, y mejorar el layout de pc tambien
+-->
+
+<!-- AL FINAL
+Filtro de tags al crear cuartos
+Visualzador de la musica
 -->
 
 <!-- DONE
 arregle los modales del principio
 Hacer un boton de recargar al estar escogiendo a los cuartos
 Hacer que el cliente avise cuando ya cargo el track
+Empezar la cancion cuando todos esten listos
+Hacer el cambio entre modo chat y modo guess
+Hacer que de puntos, que salgan en el scoreboard y que cargue la siguiente
+Cuando se termine el juego, dar un tiempo de delay para que se salga la gente y luego cerrar la sala
+Hacer registro de usuario
 -->

@@ -26,7 +26,7 @@ while($row = $resultroom->fetch_assoc()){
 		break;
 	$i++;
 }
-$sqlsong = "SELECT * FROM soundtrack WHERE id = ". $row["soundtrackid"];
+$sqlsong = "SELECT soundtrack.*, album.name AS albumname , album.date, `source`.name AS sourcename FROM soundtrack LEFT JOIN album ON album.id = soundtrack.albumid LEFT JOIN `source` ON album.sourceid = `source`.id WHERE soundtrack.id = ". $row["soundtrackid"];
 $result = $conn->query($sqlsong);
 if($song = $result->fetch_assoc()){
 	$jsondata["success"] = true;

@@ -24,11 +24,11 @@ if(isset($_GET["userid"]) && isset($_GET["guessid"]) && isset($_GET["guessroomid
 require '../vendor/autoload.php';
 $pusher = new Pusher\Pusher("242c1ebc2f45447381e3", "14a36ffce25dde568753", "553238", array('cluster' => 'mt1'));
 
-$sqluser = "SELECT name FROM usuario WHERE id = ". $userid;
+$sqluser = "SELECT usuario.name, userdetails.gamescore FROM usuario LEFT JOIN userdetails ON userdetails.userid = usuario.id WHERE usuario.id = ". $userid;
 $resultuser = $conn->query($sqluser);
 $user = $resultuser->fetch_assoc();
 
-$sqlroom = "SELECT link_soundtrack_list.soundtrackid, guessroom.songinlist FROM guessroom LEFT JOIN link_soundtrack_list ON guessroom.stlistid = link_soundtrack_list.stlistid WHERE guessroom.id = ". $guessroomid ." ORDER BY link_soundtrack_list.id";
+$sqlroom = "SELECT link_soundtrack_list.soundtrackid, guessroom.songinlist, guessroom.gamelength FROM guessroom LEFT JOIN link_soundtrack_list ON guessroom.stlistid = link_soundtrack_list.stlistid WHERE guessroom.id = ". $guessroomid ." ORDER BY link_soundtrack_list.id";
 $resultroom = $conn->query($sqlroom);
 $i = 0;
 while($row = $resultroom->fetch_assoc()){
@@ -49,7 +49,23 @@ $song = $resultsong->fetch_assoc();
 
 if($song["sourceid"] == $guessid){
 	//correct answer
-	$message = array('message' => "", 'username' => $user["name"], 'isright' => true);
+	$sqlupdateusr = "UPDATE userdetails SET gamescore = ". ($user["gamescore"]+1) ." WHERE userid = ". $userid;
+	$conn->query($sqlupdateusr);
+	
+	$sqlallusers = "UPDATE userdetails SET trackready = 0 WHERE guessroomid = ". $guessroomid;
+	$conn->query($sqlallusers);
+	
+	$sqlupdateroom = "UPDATE guessroom SET songinlist = ". ($row["songinlist"]+1) ." WHERE id = ". $guessroomid;
+	$conn->query($sqlupdateroom);
+	
+	$sqlupdateroom = "UPDATE guessroom SET songinlist = ". ($row["songinlist"]+1) ." WHERE id = ". $guessroomid;
+	$conn->query($sqlupdateroom);
+	
+	$finished = false;
+	if($row["gamelength"] <= ($user["gamescore"]+1))
+		$finished = true;
+	
+	$message = array('message' => "", 'username' => $user["name"], 'userid' => $userid, 'newscore' => ($user["gamescore"]+1), 'isright' => true, 'finished' => $finished);
 	$pusher->trigger('guess-channel-'.$guessroomid, 'global-response', $message);
 }
 else{
@@ -57,7 +73,7 @@ else{
 	$sqlguess = "SELECT name FROM source WHERE id = ". $guessid;
 	$guessresponse = $conn->query($sqlguess);
 	$source = $guessresponse->fetch_assoc();
-	$message = array('message' => $source["name"], 'username' => $user["name"], 'isright' => false);
+	$message = array('message' => $source["name"], 'username' => $user["name"], 'userid' => $userid, 'newscore' => ($user["gamescore"]), 'isright' => false, 'finished' => false);
 	$pusher->trigger('guess-channel-'.$guessroomid, 'global-response', $message);
 }
 

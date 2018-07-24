@@ -1,12 +1,15 @@
-<!-- TODO
+TODO:
 Hacer un heartbeat para saber si los usuarios se salieron de la manera adecuada, y si no sacarlos igual
 Que se vea en el cel, y mejorar el layout de pc tambien
-Arreglar error de cuando le pican rapido a enter  se manda 2 veces la correcta
-Si se puede dejar mas tiempo tocando la cancion anterior en lo que empieza la siguiente
 Hacer que no agarre Fanfares porque ps no mms
--->
+Hacer que busque mejor el guesser
+Arreglar backend para editar tags de soundtracks y ponerle tag a los que son dificiles de reconocer relativamente
 
-<!-- AL FINAL
+AL FINAL:
 Filtro de tags al crear cuartos
 Visualzador de la musica
--->
+
+
+DONE:
+Arreglar error de cuando le pican rapido a enter  se manda 2 veces la correcta
+Si se puede dejar mas tiempo tocando la cancion anterior en lo que empieza la siguiente

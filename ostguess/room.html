@@ -103,10 +103,16 @@
 		autoplay: false,
 		preload: false
 	});
+	var sound2 = new Howl({
+		src: [''],
+		autoplay: false,
+		preload: false
+	});
 	var connected = false;
 	var gameStarted = false;
 	var chatIsOn = true;
 	var song = [];
+	var playFlag = true;
 	//Pusher.logToConsole = true;	//Solo mantener en debugeo
 	//Creacion de conexion con pusher
 	var pusher = new Pusher('242c1ebc2f45447381e3', {
@@ -115,10 +121,10 @@
 	  encrypted: true,
 	  authEndpoint: '../pusher/pusher_auth.php'//Lugar donde va a autenticar a los usuarios
 	});
-	//Se subscrive al canal de guesses y hago una funcion para responder
+	//Se suscribe al canal de guesses y hago una funcion para responder
 	
 	pusher.connection.bind('disconnected', function() {
-		console.log("byebye");
+		//console.log("byebye");
 	});
 	
 	var channel = pusher.subscribe('guess-channel-' + $.session.get("roomid"));
@@ -164,15 +170,15 @@
 	}); 
 	//Aqui llegan los mensajes de chat normales
 	channel.bind('global-chat', function(data){
-		console.log("chat recived");
+		//console.log("chat recived");
 		var html = "<p>"+ data["username"] + ": " + data["message"] + "</p>";
 		$(".guessChat").append(html);
 		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
 	});
 	//Aqui se actualizan los jugadores en la sala
 	channel.bind('global-updateplayers', function(data){
-		console.log("other players:");
-		console.log(data);
+		//console.log("other players:");
+		//console.log(data);
 		var html = "<p>"+ data["message"] +"</p>";
 		$(".guessChat").append(html);
 		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
@@ -193,14 +199,23 @@
 	});
 	//El servidor le avisa al cliente que ya todos los usuarios cargaron y que ya va a empezar a tocar, se baja el audio de la cancion anterior y, despues de un corto delay, comienza la siguiente
 	channel.bind('global-alltracksready', function(data){
-		console.log("everyone is ready");
-		setTimeout(countDownToPlay, 3000);
+		//console.log("everyone is ready");
+		setTimeout(countDownToPlay, 2000);
 		
 		if(!gameStarted)
 		{
 			$(".guessChat").append("<p> Game is about to start </p>");
 			gameStarted = true;
 			$.session.set("gameStarted", true);
+		}
+		else{
+			if(playFlag){
+				console.log("song 2 fade staato");
+				sound2.fade(1, 0, 4000);
+			} else {
+				console.log("song 1 fade staato");
+				sound.fade(1, 0, 4000);
+			}
 		}
 		
 	});
@@ -225,10 +240,9 @@
 	
 	function onSongGuessed(id, score){
 		$("#userState"+id).html("Score: <br>"+score);
-		setTimeout(function(){
-			sound.fade(1, 0, 1000);
-		}, 3000);
-		setTimeout(loadCurrentSong, 4000);
+		playFlag = !playFlag;
+		console.log("strange");
+		loadCurrentSong();
 		switchInput();
 		showSong();
 	}
@@ -253,8 +267,8 @@
 	}
 	
 	function resetGame(){
-		console.log("reset game");
 		var html = "<p>La sala se cerrara en 20 segundos</p>";
+		countDownToClose();
 		$(".guessChat").append(html);
 		$('.guessChat').scrollTop($('.guessChat')[0].scrollHeight);
 	}
@@ -304,7 +318,7 @@
 	}
 	
 	function makeAGuess(){//Recive el id de el source que va a adivinar
-		console.log("guess try");
+		//console.log("guess try");
 		var id = $(".item.active.selected").attr("data-value");
 		var datos = {
 			"userid" : $.session.get("userid"), ///TODO: usar la id del usuario conectado
@@ -343,7 +357,7 @@
 			type: "post",
 			success: function (response){
 				console.log("chat success");
-				console.log(datos);
+				//console.log(datos);
 			},
 			error: function(event,xhr,options,exc){
 				console.log("ajax_error_can't_send_guess");
@@ -356,7 +370,6 @@
 	}
 	
 	function loadCurrentSong(){
-		sound.unload();
 		var datos = {
 			"roomid": $.session.get("roomid")
 		};
@@ -366,24 +379,55 @@
 			type: "post",
 			success: function(response){
 				if(response.success){
-					sound.unload();
-					sound = new Howl({
-						src: ['../' + response["song"]["file"]],
-						volume: 1.0,
-						loop: false,
-						autoplay: false,
-						html5: true,
-						onload: onTrackLoaded(),
-						onfade: function(){
-							console.log("on fade");
-							sound.stop();
-						},
-						onend: function(){
-						  console.log("track finished");	
-						}
-					});
 					song = response["song"];
-					sound.load();
+					if(playFlag){
+						sound.unload();
+						sound = new Howl({
+							src: ['../' + response["song"]["file"]],
+							volume: 1.0,
+							loop: true,
+							autoplay: false,
+							html5: true,
+							onload: onTrackLoaded(),
+							onfade: function(){
+								sound.stop();
+							},
+							onstop: function(){
+								console.log("song1 stoppu");
+							},
+							onend: function(){
+							  //console.log("track finished");	
+							},
+							onplay: function(){
+								console.log("song1 playing");
+							}
+						});
+						sound.load();
+					}
+					else{
+						sound2.unload();
+						sound2 = new Howl({
+							src: ['../' + response["song"]["file"]],
+							volume: 1.0,
+							loop: true,
+							autoplay: false,
+							html5: true,
+							onload: onTrackLoaded(),
+							onfade: function(){
+								sound2.stop();
+							},
+							onend: function(){
+							  //console.log("track finished");	
+							},
+							onstop: function(){
+								console.log("song2 stoppu");
+							},
+							onplay: function(){
+								console.log("song2 playing");
+							}
+						});
+						sound2.load();
+					}
 				}else{
 					console.log("failed to get song dir: ");
 					console.log(response["song"]);
@@ -400,7 +444,7 @@
 	}
 	
 	function onTrackLoaded(){
-		console.log("track loaded");
+		
 		var datos = {
 			"userid": $.session.get("userid"),
 			"roomid": $.session.get("roomid")
@@ -431,7 +475,11 @@
 				clearInterval(f);
 				$("#songCountdown").hide();
 				switchInput();
-				sound.play();
+				if(playFlag){
+					sound.play();
+					console.log("should play song1");
+				} else
+					sound2.play()
 			}
 			t -= 1000;
 			

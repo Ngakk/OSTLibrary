@@ -28,7 +28,7 @@ $sqluser = "SELECT usuario.name, userdetails.gamescore FROM usuario LEFT JOIN us
 $resultuser = $conn->query($sqluser);
 $user = $resultuser->fetch_assoc();
 
-$sqlroom = "SELECT link_soundtrack_list.soundtrackid, guessroom.songinlist, guessroom.gamelength FROM guessroom LEFT JOIN link_soundtrack_list ON guessroom.stlistid = link_soundtrack_list.stlistid WHERE guessroom.id = ". $guessroomid ." ORDER BY link_soundtrack_list.id";
+$sqlroom = "SELECT link_soundtrack_list.soundtrackid, guessroom.songinlist, guessroom.gamelength, guessroom.inter FROM guessroom LEFT JOIN link_soundtrack_list ON guessroom.stlistid = link_soundtrack_list.stlistid WHERE guessroom.id = ". $guessroomid ." ORDER BY link_soundtrack_list.id";
 $resultroom = $conn->query($sqlroom);
 $i = 0;
 while($row = $resultroom->fetch_assoc()){
@@ -47,7 +47,7 @@ WHERE `soundtrack`.id = ". $row["soundtrackid"];
 $resultsong = $conn->query($sqlsong);
 $song = $resultsong->fetch_assoc();
 
-if($song["sourceid"] == $guessid){
+if($song["sourceid"] == $guessid && $row["inter"] != 1){
 	//correct answer
 	$sqlupdateusr = "UPDATE userdetails SET gamescore = ". ($user["gamescore"]+1) ." WHERE userid = ". $userid;
 	$conn->query($sqlupdateusr);
@@ -55,10 +55,7 @@ if($song["sourceid"] == $guessid){
 	$sqlallusers = "UPDATE userdetails SET trackready = 0 WHERE guessroomid = ". $guessroomid;
 	$conn->query($sqlallusers);
 	
-	$sqlupdateroom = "UPDATE guessroom SET songinlist = ". ($row["songinlist"]+1) ." WHERE id = ". $guessroomid;
-	$conn->query($sqlupdateroom);
-	
-	$sqlupdateroom = "UPDATE guessroom SET songinlist = ". ($row["songinlist"]+1) ." WHERE id = ". $guessroomid;
+	$sqlupdateroom = "UPDATE guessroom SET songinlist = ". ($row["songinlist"]+1) .", inter = 1 WHERE id = ". $guessroomid;
 	$conn->query($sqlupdateroom);
 	
 	$finished = false;

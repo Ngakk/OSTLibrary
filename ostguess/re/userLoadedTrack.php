@@ -45,7 +45,7 @@ if($conn->query($sqlupdateuser)){
 	
 	if($allready && $count == $roomsize)
 	{
-		$sqlupdateroom = "UPDATE guessroom SET waiting = 0 WHERE id = ". $roomid;
+		$sqlupdateroom = "UPDATE guessroom SET waiting = 0, inter = 0 WHERE id = ". $roomid;
 		$conn->query($sqlupdateroom);
 		$pusher = new Pusher\Pusher("242c1ebc2f45447381e3", "14a36ffce25dde568753", "553238", array('cluster' => 'mt1'));
 		$pusher->trigger('guess-channel-'.$roomid, 'global-alltracksready', true);

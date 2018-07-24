@@ -35,12 +35,14 @@
 	
 	function sendAddArtista(){
 		var datos = {
-			"name" : $("#addArtistaName").val(),
-			"apellidop" : $("#addArtistaApellido").val(),
+			"fullname": $("#addArtistaName").val(),
+			"firstname" : $("#addArtistaFirstname").val(),
+			"lastname" : $("#addArtistaApellido").val(),
 			"date" : $("#addArtistaFecha").val(),
 			"pais" : $("#addArtistaPais").val(),
 			"imageurl" : $("#addArtistaImage").val()
 		}
+		console.log(datos);
 		$.ajax({
 			data: datos,
 			url: "admin/agregarArtista.php",
@@ -174,7 +176,7 @@
 	function addSoundtrackClick(){
 		$("#modalSoundtrackTitulo").html("Agregar");
 		$("#siAgregarSoundtrack").html("Agregar");
-		
+		/*
 		$("#addSoundtrackNumber").val("");
 		$("#addSoundtrackDisc").val("");
 		$("#addSoundtrackName").val("");
@@ -185,7 +187,7 @@
 		$("#addStArtistFilterInput").val("");
 		$("#addStArtistFilteredResultsSelected").html("");
 		$("#addStArtistFilteredResults").html("");
-		
+		*/
 		$("#siAgregarSoundtrack").attr("onClick", "sendAddSoundtrack(); return false;");
 	}
 	
@@ -492,6 +494,7 @@
 				else
 				{
 					console.log("failure editing album");
+					console.log(json.data["message"]);
 				}
 			},
 			error: function(event,xhr,options,exc){

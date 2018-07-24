@@ -1,0 +1,12 @@
+<!-- TODO
+Hacer un heartbeat para saber si los usuarios se salieron de la manera adecuada, y si no sacarlos igual
+Que se vea en el cel, y mejorar el layout de pc tambien
+Arreglar error de cuando le pican rapido a enter  se manda 2 veces la correcta
+Si se puede dejar mas tiempo tocando la cancion anterior en lo que empieza la siguiente
+Hacer que no agarre Fanfares porque ps no mms
+-->
+
+<!-- AL FINAL
+Filtro de tags al crear cuartos
+Visualzador de la musica
+-->

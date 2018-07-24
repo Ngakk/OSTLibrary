@@ -32,8 +32,7 @@ if(isset($_GET['name']) && isset($_GET["date"]) && isset($_GET["imageurl"]) && i
 }
 
 $name = str_replace("'", "''", $name);
-$file = str_replace("'", "''", $file);
-$sql = "INSERT INTO `album` (`id`, `name`, `date`, `imageurl`, `smallimgurl`, `sourceid`, `rating`, `threadid`) VALUES (NULL, '". $name ."', '". $date ."', '". $imageurl ." ', '', '". $source ."', '0', '0')";
+$sql = "INSERT INTO `album` (`id`, `name`, `date`, `imageurl`, `smallimgurl`, `backimgurl`, `sourceid`, `rating`, `threadid`) VALUES (NULL, '". $name ."', '". $date ."', '". $imageurl ." ', '', '', '". $source ."', '0', '0')";
 
 //echo $sql;
 
@@ -43,20 +42,20 @@ if($conn->query($sql) == TRUE){
 	$id = $idresult->fetch_assoc();
 	$success = true;
 	for($i = 0; $i < count($tags); $i++){
-		$sqlTemp = "INSERT INTO `link_album_tag` (`id`, `albumid`, `tagid`) VALUES (NULL, '". $id["id"] ."', '". $tags[$i] ."')";
+		$sqlTemp = "INSERT INTO `link_album_tag` (`id`, `albumid`, `tagid`, `repetitions`) VALUES (NULL, '". $id["id"] ."', '". $tags[$i] ."', 1)";
 		if(!$conn->query($sqlTemp) == TRUE)
 			$success = false;
 	}
 	if($success){
 		$jsondata["success"] = true;
 	}else{
-		$jasondata["success"] = false;
+		$jsondata["success"] = false;
 		$jsondata["data"] = array(
 			'message' => 'Se agrego el album pero no se pudo hacer la relacion con artista.'
 		);	
 	}
 } else {
-	$jasondata["success"] = false;
+	$jsondata["success"] = false;
 	$jsondata["data"] = array(
 		'message' => 'No se encontro ningun resultado.'
 	);	

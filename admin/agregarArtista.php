@@ -12,9 +12,11 @@ if($conn->connect_error){
 }
 
 
-if(isset($_POST['name']) && isset($_POST['apellidop']) && isset($_POST['date']) && isset($_POST['pais']) && isset($_POST['imageurl'])){
-	$name = $_POST['name'];
-	$apellidop = $_POST['apellidop'];
+if(isset($_POST['fullname']) && isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['date']) 
+	&& isset($_POST['pais']) && isset($_POST['imageurl'])){
+	$fullname = $_POST['fullname'];
+	$firstname = $_POST['firstname'];
+	$lastname = $_POST['lastname'];
 	$date = $_POST['date'];
 	$pais = $_POST['pais'];
 	$imageurl = $_POST["imageurl"];
@@ -26,15 +28,8 @@ else{
 	$conn->close();
 }
 
-if(isset($_GET['name']) && isset($_GET['apellidop']) && isset($_GET['date']) && isset($_GET['pais']) && isset($_GET['imageurl'])){
-	$name = $_GET['name'];
-	$apellidop = $_GET['apellidop'];
-	$date = $_GET['date'];
-	$pais = $_GET['pais'];
-	$imageurl = $_GET["imageurl"];
-}
-
-$sql = "INSERT INTO `artista` (`id`, `name`, `apellidop`, `date`, `pais`, `imageurl`, `rating`) VALUES (NULL, '". $name ."', '". $apellidop ."', '". $date ."', '". $pais ."', '". $imageurl ."', '0')";
+$sql = "INSERT INTO `artista` (`id`, `fullname`, `firstname`, `lastname`, `date`, `pais`, `imageurl`, `rating`, `description`, `threadid`)
+ VALUES (NULL, '". $fullname."', '". $firstname ."', '". $lastname ."', '". $date ."', '". $pais ."', '". $imageurl ."', '0', '', 0)";
 
 //echo $sql;
 

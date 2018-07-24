@@ -21,6 +21,7 @@ while($row = $result->fetch_assoc()){
 	$name = str_replace(".", "", $name);
 	$name = str_replace(",", "", $name);
 	$name = str_replace("!", "", $name);
+	$name = str_replace("&", "and", $name);
 	$sql2 = "UPDATE soundtrack SET `file` = 'music/M/My_Hero_Academia_S1_OST/". $name .".mp3' WHERE id = ". $row["id"];*/
 	
 	//$sql2 = "INSERT INTO `link_soundtrack_tag` (`id`, `soundtrackid`, `tagid`, `repetitions`) VALUES (NULL, '". $row["id"] ."', '2', '1')";

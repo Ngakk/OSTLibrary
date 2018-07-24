@@ -48,27 +48,27 @@ if($conn->query($sql) == TRUE){
 	if($conn->query($sqlTag) == TRUE){
 		$success = true;
 		for($i = 0; $i < $tagcount; $i++){
-			$sqlTemp = "INSERT INTO `link_album_tag` (`id`, `albumid`, `tagid`) VALUES (NULL, '". $id ."', '". $tags[$i] ."')";
-			if($conn->query($sqlTemp) == FALSE)
+			$sqlTemp = "INSERT INTO `link_album_tag` (`id`, `albumid`, `tagid`, `repetitions`) VALUES (NULL, '". $id ."', '". $tags[$i] ."', 1)";
+			if(!$conn->query($sqlTemp))
 				$success = false;
 		}
 		if($success){
 			$jsondata["success"] = true;
 		}else{
-			$jasondata["success"] = false;
+			$jsondata["success"] = false;
 			$jsondata["data"] = array(
 				'message' => 'Se actualizo el album y se borraron las relaciones con los tags previos, preo no se pudo hacer la relacion con tags nueva.'
 			);	
 		}
 	}
 	else{
-		$jasondata["success"] = false;
+		$jsondata["success"] = false;
 		$jsondata["data"] = array(
 			'message' => 'Se edito el album pero no se actualizaron las relaciones con los tags'
 		);	
 	}
 } else {
-	$jasondata["success"] = false;
+	$jsondata["success"] = false;
 	$jsondata["data"] = array(
 		'message' => 'No se encontro ningun resultado.'
 	);	

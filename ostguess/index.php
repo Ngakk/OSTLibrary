@@ -437,8 +437,7 @@ if(isset($_SESSION["loggedin"]))
 
 <!-- TODO
 Hacer un heartbeat para saber si los usuarios se salieron de la manera adecuada, y si no sacarlos igual
-Hacer el display de la cancion cuando le atinan
-Que el usuario pueda editar su perfil
+
 Que se vea en el cel, y mejorar el layout de pc tambien
 -->
 
@@ -448,12 +447,11 @@ Visualzador de la musica
 -->
 
 <!-- DONE
-arregle los modales del principio
-Hacer un boton de recargar al estar escogiendo a los cuartos
-Hacer que el cliente avise cuando ya cargo el track
 Empezar la cancion cuando todos esten listos
 Hacer el cambio entre modo chat y modo guess
 Hacer que de puntos, que salgan en el scoreboard y que cargue la siguiente
 Cuando se termine el juego, dar un tiempo de delay para que se salga la gente y luego cerrar la sala
 Hacer registro de usuario
+Hacer el display de la cancion cuando le atinan
+Que el usuario pueda editar su perfil
 -->

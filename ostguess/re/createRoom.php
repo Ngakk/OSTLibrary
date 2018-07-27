@@ -47,7 +47,23 @@ if($conn->query($sqlInsertRoom)){
 		
 		$songsneeded = ($gamelength-1)*$size +1;
 		
-		$sqltracks = "SELECT * FROM soundtrack WHERE file != '' ORDER BY RAND() LIMIT ". $songsneeded;
+		$sqltracks = "SELECT DISTINCT soundtrack.* FROM soundtrack 
+		INNER JOIN (
+			link_soundtrack_tag
+			INNER JOIN tag
+			ON tag.id = link_soundtrack_tag.tagid
+		)
+		ON link_soundtrack_tag.soundtrackid = soundtrack.id
+		WHERE file != '' AND soundtrack.id NOT IN(
+			SELECT soundtrack.id FROM soundtrack 
+			INNER JOIN (
+				link_soundtrack_tag
+				INNER JOIN tag
+				ON tag.id = link_soundtrack_tag.tagid
+			)
+			ON link_soundtrack_tag.soundtrackid = soundtrack.id
+			WHERE tag.id = 6
+		) ORDER BY RAND() LIMIT ". $songsneeded;
 		$resulttracks = $conn->query($sqltracks);
 		$everythingright = true;
 		while($rowtrack = $resulttracks->fetch_assoc()){

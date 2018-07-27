@@ -33,7 +33,7 @@ if($table == "contenido"){
 	$sql = "SELECT contenido.*, seccion.name AS 'sectName' FROM contenido LEFT JOIN seccion ON (contenido.sectid = seccion.id) ORDER BY id LIMIT ".  (($page-1)*50) .",". 50;
 }
 else if($table == "soundtrack"){
-	$sql = "SELECT soundtrack.*, album.name AS albumName FROM `soundtrack` LEFT JOIN album ON (soundtrack.albumid = album.id) ORDER BY albumid, number LIMIT ".  (($page-1)*50) .",". 50;
+	$sql = "SELECT soundtrack.*, album.name AS albumName FROM `soundtrack` LEFT JOIN album ON (soundtrack.albumid = album.id) ORDER BY albumid, disc, number LIMIT ".  (($page-1)*50) .",". 50;
 }
 else if($table == "album"){
 	$sql = "SELECT album.*, source.name AS sourceName, tag.name AS tagName FROM album LEFT JOIN source ON source.id = album.sourceid LEFT JOIN(link_album_tag LEFT JOIN tag ON tag.id = link_album_tag.tagid)ON link_album_tag.albumid = album.id ORDER BY id LIMIT ".  (($page-1)*50) .",". 50;

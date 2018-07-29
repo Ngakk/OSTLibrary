@@ -9,7 +9,7 @@ if($conn->connect_error){
 	die("Conecction failed: " . $conn->connect_error);
 }
 
-$sql = "SELECT album.*, `source`.name AS sourcename FROM album LEFT JOIN `source` ON `source`.id = album.sourceid ORDER BY album.date DESC LIMIT 3";
+$sql = "SELECT album.*, `source`.name AS sourcename FROM album LEFT JOIN `source` ON `source`.id = album.sourceid ORDER BY album.rating DESC LIMIT 3";
 $result = $conn->query($sql);
 while($row = $result->fetch_assoc()){
 	$jsondata[] = $row;

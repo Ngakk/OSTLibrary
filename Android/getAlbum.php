@@ -12,8 +12,11 @@ if($conn->connect_error){
 if(isset($_POST["id"])){
 	$id = $_POST["id"];
 }
+if(isset($_GET["id"])){
+	$id = $_GET["id"];
+}
 
-$sql = "SELECT album.*, `source`.name AS sourcename FROM album LEFT JOIN `source` ON `source`.id = album.sourceid WHERE id = ". $id ." LIMIT 1";
+$sql = "SELECT album.*, `source`.name AS sourcename FROM album LEFT JOIN `source` ON `source`.id = album.sourceid WHERE album.id = ". $id ." LIMIT 1";
 $result = $conn->query($sql);
 while($row = $result->fetch_assoc()){
 	$jsondata[] = $row;
